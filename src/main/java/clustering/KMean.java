@@ -24,24 +24,32 @@ public class KMean {
         this.numCluster=numCluster;
         this.numIteration=numIteration;
         this.MDL= MDL;
-        userProfile= new UserProfile(user);
+        userProfile = new UserProfile(user, numCluster);
         clustering();
     }
 
     public void clustering(){
         int i=0;
-        ArrayList<WVTWordVector> oldCentroids= null;
-        while (i==numIteration){
+//        ArrayList<WVTWordVector> oldCentroids= new ArrayList<WVTWordVector>();
+        while (i != numIteration) {
             Double sum = 0.0;
+            ArrayList<WVTWordVector> oldCentroids = new ArrayList<WVTWordVector>();
             for(int j=0; j<numCluster; j++){
                 oldCentroids.add(userProfile.clusters[j].centroid);
             }
+            clear();
             updateCluster();
             for(int j=0; j<numCluster; j++){
                 sum+=getDistance(userProfile.clusters[j].centroid, oldCentroids.get(i));
             }
             if(sum<MDL) break;
             i++;
+        }
+    }
+
+    private void clear(){
+        for(int j=0; j<numCluster; j++){
+            userProfile.clusters[j].clear();
         }
     }
 
