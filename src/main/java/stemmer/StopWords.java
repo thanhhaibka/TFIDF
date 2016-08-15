@@ -10,7 +10,7 @@ public class StopWords extends AbstractStopWordFilter{
 
     private static HashSet m_StopChars = null;
 
-    private static String[] stopWords = new String[] {"http","https","á", "à", "ạ", "á_à", "a_ha", "à_ơi", "ạ_ơi", "ai", "ái",
+    private static String[] stopWords = new String[] {"ít","src","http","https","á", "à", "ạ", "á_à", "a_ha", "à_ơi", "ạ_ơi", "ai", "ái",
             "ai_ai", "ái_chà", "ái_dà", "ai_nấy", "alô", "a-lô", "amen", "áng", "anh", "ào", "ắt", "ắt_hẳn",
             "ắt_là", "âu_là", "ầu_ơ", "ấy", "bà", "bác", "bài", "bản", "bạn", "bằng", "bằng_ấy", "bằng_không",
             "bằng_nấy", "bao_giờ", "bao_lâu", "bao_nả", "bao_nhiêu", "bập_bà_bập_bõm", "bập_bõm", "bất_kỳ",
@@ -66,7 +66,7 @@ public class StopWords extends AbstractStopWordFilter{
             "vừa", "cao", "quá", "hay", "lớn", "mới", "hơn", "thường", "hoặc", "nh", "ngoài_ra", "hoàn_toàn", "thì_thôi", "ra_sao"
             };
     private static char[] stopChars= new char[]{'(',')',',','.',';','-','+','=','&',':','�',10,'<',39,
-            '>','?', '…','“','”','!','"','#','$','{','}','/','*',92, '1','2','3','4','5','6','7','8','9','0'};
+            '>','?', '…','“','”','!','"','#','$','{','}','/','*',92, '1','2','3','4','5','6','7','8','9','0','_','[',']'};
 
     static {
         if (m_Stopwords == null) {
@@ -89,7 +89,9 @@ public class StopWords extends AbstractStopWordFilter{
     }
 
     public boolean isStopword(String str) {
-        if(m_StopChars.contains(str.charAt(0))) return true;
-        return m_Stopwords.contains(str.toLowerCase());
+        if(str.endsWith(".jpg")) return true;
+        else if(str.length()==1) return true;
+//        else if(m_StopChars.contains(str.charAt(0))) return true;
+        else return m_Stopwords.contains(str.toLowerCase());
     }
 }

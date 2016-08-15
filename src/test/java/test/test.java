@@ -1,12 +1,8 @@
-package app; /**
+package test; /**
  * Created by pc on 22/07/2016.
  */
 
-import clustering.KMean;
-import config.Cluster;
 import config.User;
-import edu.udo.cs.wvtool.main.WVTDocumentInfo;
-import edu.udo.cs.wvtool.main.WVTWordVector;
 import edu.udo.cs.wvtool.util.WVToolException;
 import stemmer.StopWords;
 import edu.udo.cs.wvtool.config.WVTConfiguration;
@@ -22,7 +18,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class tfidf {
+public class test {
 
     /**
      * Setting
@@ -73,7 +69,7 @@ public class tfidf {
         VietTokenizer vietTokenizer= new VietTokenizer();
         for(int i=0; i<inputFileName.length; i++){
             ArrayList<String> t= new ArrayList<String>();
-            sentences= UTF8FileUtility.getLines(currentDirectory+"input/"+inputFileName[i]);
+            sentences= UTF8FileUtility.getLines(currentDirectory+ "resources/input/" +inputFileName[i]);
             for(String sentence: sentences){
                 String[] var1= vietTokenizer.tokenize(sentence);
                 for(String var2:var1){
@@ -90,8 +86,9 @@ public class tfidf {
         WVTConfiguration config = new WVTConfiguration();
         WVToolNew wvtn= new WVToolNew(false);
         WVTWordList wordList= wvtn.createWordList(tokens, config);
-        wordList.pruneByFrequency(2,10);
+        wordList.pruneByFrequency(1,10);
         user.setWordList(wordList);
+        wordList.storePlain(new FileWriter("/home/pc/Documents/TFIDF/src/main/resources/result/wordlist.txt"));
         user.setWordVectors(wvtn.createVector(tokens, config, wordList));
         return user;
     }
@@ -111,7 +108,7 @@ public class tfidf {
         VietTokenizer vietTokenizer= new VietTokenizer();
         for(int i=0; i<inputFileName.length; i++){
             ArrayList<String> t= new ArrayList<String>();
-            sentences= UTF8FileUtility.getLines(currentDirectory+"input/"+inputFileName[i]);
+            sentences= UTF8FileUtility.getLines(currentDirectory+ "resources/input/" +inputFileName[i]);
             for(String sentence: sentences){
                 String[] var1= vietTokenizer.tokenize(sentence);
                 for(String var2:var1){
@@ -141,12 +138,12 @@ public class tfidf {
     }
 
     public static void main(String[] args) throws WVToolException, IOException {
-        tfidf t= new tfidf();
+        test t= new test();
         User user= t.getUserVector();
 //        user.getWordList();
-        KMean kMean= new KMean(user,2, 1000, 0.1);
-        System.err.println(kMean.getUserProfile().clusters[0].getSize());
-        System.err.println(kMean.getUserProfile().clusters[1].getSize());
+//        KMean kMean= new KMean(user,2, 1000, 0.1);
+//        System.err.println(kMean.getUserProfile().clusters[0].getSize());
+//        System.err.println(kMean.getUserProfile().clusters[1].getSize());
         System.out.print(user);
     }
 }

@@ -67,7 +67,7 @@ public class WVTConfiguration {
 
     public static final String STEP_VECTOR_CREATION = "vectorcreation";
 
-    public static final String STEP_OUTPUT = "output";
+    public static final String STEP_OUTPUT = "resources/output";
 
     /* constants that define the file type */
 

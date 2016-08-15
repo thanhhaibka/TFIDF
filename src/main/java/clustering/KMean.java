@@ -7,6 +7,8 @@ import edu.udo.cs.wvtool.main.WVTWordVector;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static java.lang.System.out;
+
 /**
  * Created by pc on 27/07/2016.
  */
@@ -35,14 +37,15 @@ public class KMean {
             Double sum = 0.0;
             ArrayList<WVTWordVector> oldCentroids = new ArrayList<WVTWordVector>();
             for(int j=0; j<numCluster; j++){
-                oldCentroids.add(userProfile.clusters[j].centroid);
+                oldCentroids.add(j, userProfile.clusters[j].centroid);
             }
             clear();
             updateCluster();
             for(int j=0; j<numCluster; j++){
-                sum+=getDistance(userProfile.clusters[j].centroid, oldCentroids.get(i));
+                sum += getDistance(userProfile.clusters[j].centroid, oldCentroids.get(j));
+//                System.err.println(getDistance(userProfile.clusters[j].centroid, oldCentroids.get(j)));
             }
-            if(sum<MDL) break;
+//            if(sum<MDL) break;
             i++;
         }
     }
@@ -54,20 +57,24 @@ public class KMean {
     }
 
     public void updateCentroids(){
-        WVTWordVector var1= user.getWordVectors().get(0);
-        int size= var1.getValues().length;
         for(int i=0; i<numCluster; i++){
-            WVTWordVector var3= userProfile.clusters[i].centroid;
-            for(int j=0; j<userProfile.clusters[i].getSize(); j++){
-                WVTWordVector var2= userProfile.clusters[i].cluster.get(j);
-                var3.setValues(sumVector(var2, var1));
+            WVTWordVector var3 = new WVTWordVector();
+//            System.err.print(i+":");
+            int size= userProfile.clusters[i].getSize();
+            for(int j=0; j< size; j++){
+                WVTWordVector var2= userProfile.clusters[i].memOfCluster.get(j);
+                var3.setValues(sumVector(var2, var3));
+//
+//                for(double d: var3.getValues()){
+//                    System.err.print(d+" ");
+//                }
+//                System.err.println();
             }
-            if(size!=0){
-//                var3.setValues(avgVector(var3, size));
+            if (size != 0) {
+                if(getDistance(avgVector(var3, size),userProfile.clusters[i].centroid.getValues())==0) out.print("failed");
                 userProfile.clusters[i].centroid.setValues(avgVector(var3, size));
             }
         }
-
     }
 
     public void updateCluster(){
@@ -81,7 +88,7 @@ public class KMean {
                     numCluster = j;
                 }
             }
-            userProfile.clusters[numCluster].cluster.add(user.getWordVectors().get(i));
+            userProfile.clusters[numCluster].memOfCluster.add(user.getWordVectors().get(i));
         }
         updateCentroids();
     }
@@ -96,9 +103,19 @@ public class KMean {
         return Math.sqrt(sum);
     }
 
+    public double getDistance(double[] var3, double[] var4) {
+        double sum=0;
+        for(int var5=0; var5< var3.length; var5++){
+            sum+=(var3[var5]-var4[var5])*(var3[var5]-var4[var5]);
+        }
+        return Math.sqrt(sum);
+    }
+
     public double[] sumVector(WVTWordVector var1, WVTWordVector var2){
         double[] var3= var1.getValues();
+        if (var2.getValues() == null) return var3;
         double[] var4= var2.getValues();
+//        System.err.print(var1+ " " +var2);
         double[] var6= new double[var3.length];
 //        WVTWordVector var7= new WVTWordVector();
         for(int var5=0; var5< var3.length; var5++){
@@ -156,5 +173,15 @@ public class KMean {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    public static void main(String args[]){
+        WVTWordVector var1= new WVTWordVector();
+        WVTWordVector var2= new WVTWordVector();
+        double[] var11= {0,2,3,5};
+        double[] var21= {1,2,3,4};
+
+        var1.setValues(var11);
+        var2.setValues(var21);
     }
 }

@@ -1,5 +1,6 @@
 package wvtNew;
 
+import config.TFVector;
 import edu.udo.cs.wvtool.config.WVTConfiguration;
 import edu.udo.cs.wvtool.config.WVTConfigurationFact;
 import edu.udo.cs.wvtool.generic.charmapper.WVTCharConverter;
@@ -129,15 +130,20 @@ public class WVToolNew extends WVTool {
         WVTVectorCreator var9 = null;
         WVTWordVector var10 = null;
         ArrayList<WVTWordVector> var15= new ArrayList<WVTWordVector>();
+
         for (int i = 0; i < tokens.size(); i++) {
             WVTDocumentInfo var13 = new WVTDocumentInfo(i + 1 + "", "", "", "", i);
             var9 = (WVTVectorCreator) var3.getComponentForStep("vectorcreation", var13);
 
-            for (String s : tokens.get(i)
-                    ) {
+            for (String s : tokens.get(i)) {
                 var4.addWordOccurance(s);
             }
             var10 = var9.createVector(var4.getFrequenciesForCurrentDocument(), var4.getTermCountForCurrentDocument(), var4, var13);
+//            int[] var20= var4.getFrequenciesForCurrentDocument();
+//            for(int var21 = 0; var21 < var20.length; ++var21) {
+//                System.out.print(var21+":"+var20[var21]+" ");
+//            }
+            System.out.println();
             var15.add(var10);
             var4.closeDocument(var13);
         }
@@ -150,4 +156,28 @@ public class WVToolNew extends WVTool {
         return this.createVector(var1, new WVTDocumentInfo("", "", "", ""), var3, var2);
     }
 
+    public ArrayList<TFVector> createVector1(ArrayList<ArrayList<String>> tokens, WVTConfiguration var3, WVTWordList var4) throws WVToolException {
+        var4.setAppendWords(false);
+        var4.setUpdateOnlyCurrent(true);
+        WVTCharConverter var5 = null;
+        WVTTokenizer var6 = null;
+        WVTWordFilter var7 = null;
+        WVTStemmer var8 = null;
+        WVTVectorCreator var9 = null;
+        WVTWordVector var10 = null;
+        ArrayList<TFVector> var16=new ArrayList<TFVector>();
+        int[] var15= new int[1000000];
+        for (int i = 0; i < tokens.size(); i++) {
+            WVTDocumentInfo var13 = new WVTDocumentInfo(i + 1 + "", "", "", "", i);
+            var9 = (WVTVectorCreator) var3.getComponentForStep("vectorcreation", var13);
+
+            for (String s : tokens.get(i)) {
+                var4.addWordOccurance(s);
+            }
+            var15= var4.getFrequenciesForCurrentDocument();
+            var16.add(new TFVector(var15, var13));
+            var4.closeDocument(var13);
+        }
+        return var16;
+    }
 }
