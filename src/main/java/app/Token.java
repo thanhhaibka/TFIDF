@@ -71,8 +71,8 @@ public class Token {
             ++i;
         }
         User user= token.getUserVector(stringList);
-        KMean kMean= new KMean(user, 3, 10000, 0.01);
-        System.out.println(kMean.getUserProfile());
+//        KMean kMean= new KMean(user, 3, 10000, 0.01);
+//        System.out.println(kMean.getUserProfile());
         System.out.println("Done");
     }
 }
