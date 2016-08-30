@@ -3,11 +3,9 @@ package config;
 import edu.udo.cs.wvtool.main.WVTWordVector;
 import edu.udo.cs.wvtool.wordlist.WVTWordList;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -86,10 +84,31 @@ public class User {
                     map.put(this.wordList.getWord(var1), var[var1]);
                 }
             }
-//            System.out.println(v.getWvtDocumentInfo().getSourceName());
             m= merge(map, m);
         }
-//        System.out.println(m);
+        return m;
+    }
+
+    public Map<String, Double> getWordsPopular() {
+        Map<String, Double> m = new HashMap<String, Double>();
+        for (TFVector tf : tfVector) {
+//            Map<String, Double> map= new HashMap<String, Double>();
+            int[] var = tf.getVector();
+            for (int var1 = 0; var1 < var.length; var1++) {
+                if (var[var1] != 0.0) {
+//                    map.put(this.wordList.getWord(var1), var[var1]);
+                    if (m.containsKey(this.wordList.getWord(var1))) {
+                        double t = m.get(this.wordList.getWord(var1));
+                        m.put(this.wordList.getWord(var1), t + 1);
+                    } else {
+                        m.put(this.wordList.getWord(var1), 1.0);
+                    }
+                }
+            }
+        }
+        for (String s : m.keySet()) {
+            m.put(s, m.get(s) / tfVector.size());
+        }
         return m;
     }
 
@@ -130,5 +149,19 @@ public class User {
             s+="\n";
         }
         return s;
+    }
+
+    public void printTF() {
+        String s = "";
+        for (TFVector v : tfVector) {
+            int[] var = v.getVector();
+            for (int var1 = 0; var1 < var.length; var1++) {
+                if (var[var1] != 0.0) {
+                    s += " " + var1 + ":" + var[var1];
+                }
+            }
+            s += "\n";
+        }
+        System.out.println(s);
     }
 }

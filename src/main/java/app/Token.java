@@ -2,6 +2,7 @@ package app;
 
 import clustering.KMean;
 import config.Document;
+import config.Topic;
 import config.User;
 import connectDB.Cassandra;
 import edu.udo.cs.wvtool.config.WVTConfiguration;
@@ -12,8 +13,7 @@ import user.UserProfiling;
 import vn.hus.nlp.tokenizer.VietTokenizer;
 import wvtNew.WVToolNew;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -35,42 +35,96 @@ public class Token {
         Map<String, String> mapWords= new HashMap<String, String>();
         for (int i = 0; i < stringList.size(); i++) {
             ArrayList<String> t = new ArrayList<String>();
-            sentences = stringList.get(i).replaceAll("\\<.*?>",""); //remove html
-            System.out.println(sentences);
+            sentences = stringList.get(i).replaceAll("\\<.*?>","").replaceAll("\\[.*?]"," "); //remove html
+//            System.out.println(sentences);
             if(sentences!=null) {
-                String[] var1 = vietTokenizer.tokenize(sentences);
-                for (String var2 : var1) {
-                    String[] var3 = var2.split("\\s+");
-                    for (String var4 : var3) {
-                        if (!stopWords.isStopword(var4)) {
-                            mapWords.put(normalize(var4), var4);
-                            t.add(normalize(var4));
+                try{
+                    String[] var1 = vietTokenizer.tokenize(sentences);
+                    for (String var2 : var1) {
+                        String[] var3 = var2.split("\\s+");
+                        for (String var4 : var3) {
+                            if (!stopWords.isStopword(var4)) {
+                                mapWords.put(normalize(var4), var4);
+                                t.add(normalize(var4));
+                            }
                         }
                     }
+                    tokens.add(t);
+                }catch (Exception e){
+
                 }
-                tokens.add(t);
             }
         }
+//        System.out.println(tokens);
         WVTConfiguration config = new WVTConfiguration();
         WVToolNew wvtn = new WVToolNew(false);
         WVTWordList wordList = wvtn.createWordList(tokens, config);
         user.setWordList(wordList);
         user.setWordVectors(wvtn.createVector(tokens, config, wordList));
         user.setMapWords(mapWords);
-//        user.setTfVector(wvtn.createVector1(tokens,config, wordList));
+        user.setTfVector(wvtn.createVector1(tokens,config, wordList));
         return user;
+    }
+
+    public Map<String, Integer> getM(String newsID, Token token){
+        List<String> stringList = new ArrayList<String>();
+        stringList.add(Cassandra.getInstance().getTextArticle("20160829224731575"));
+        Map<String, Integer> mapNews= new HashMap<String, Integer>();
+        try{
+            User news= token.getUserVector(stringList);
+            mapNews= news.getMap();
+        }catch (Exception e){
+
+        }
+        return mapNews;
     }
 
     public static void main (String[] args) throws SQLException, ClassNotFoundException, WVToolException, IOException {
         Token token= new Token();
 //        ConnectMySQL.getInstance();
         Cassandra.getInstance();
-        UserProfiling userProfiling= new UserProfiling("6773553201908336650");
-        List<String> stringList1 = new ArrayList<String>();
-//        stringList1.add(ConnectMySQL.getContentFromNewsIDByMYSQL("20160824142401973"));
-        setProfile(userProfiling, token);
-//        Map<String, Integer> mapNews = news.getMap();
-//        System.out.println(getSimilar(setProfile(userProfiling, token), mapNews));
+        UserProfiling userProfiling= new UserProfiling();
+        List<String> stringList= new ArrayList<String>();
+        userProfiling.setLongTerm3("2885620731906312862", "kenh14.vn", 7);
+        System.out.println(userProfiling.getLongTerm());
+//        userProfiling.setLongTerm2(2000);
+//        int i=0;
+//        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
+//        for (Document d : docs) {
+//            d.setContent();
+//            d.setTopics();
+////            System.out.println(i);
+////            String s = d.getContent();
+////            if (s.isEmpty()) {
+////                userProfiling.removeLongTerm(d);
+////            } else {
+////                stringList.add(s);
+////            }
+////            ++i;
+//        }
+//        Map<String, List<Document>> userDoc= new HashMap<>();
+//        for(Document d: docs){
+//
+//            Topic max2= new Topic();
+//            List<Topic> topics= d.getTopics();
+//            Topic max1= topics.get(0);
+//            for(int j=1; j<30; j++){
+//                if(max1.compareTo(topics.get(j))>1){
+//
+//                }
+//            }
+//        }
+//
+//        User user= token.getUserVector(stringList);
+////        user.printTF();
+//        Map<String, Double> m= user.getWordsPopular();
+////        System.out.println(m);
+//        File file = new File("resources/result/stopwords.txt");
+//        FileOutputStream f = new FileOutputStream(file);
+//        ObjectOutputStream s = new ObjectOutputStream(f);
+//        s.writeObject(getTopN(m, 200));
+//        s.flush();
+//        System.out.println(getTopN(m, 200));
         System.out.println("Done");
     }
 
@@ -81,7 +135,7 @@ public class Token {
         Set<Document> docs = new HashSet(userProfiling.getLongTerm());
         for (Document d : docs) {
             d.setContent();
-            System.out.println(i + " " + d.getNewsID() + " "+ d.getTitle());
+//            System.out.println(i + " " + d.getNewsID() + " "+ d.getTitle());
             String s = d.getContent();
             if (s.isEmpty()) {
                 userProfiling.removeLongTerm(d);
@@ -91,11 +145,12 @@ public class Token {
             ++i;
         }
         User user= token.getUserVector(stringList);
-        System.out.println(user.getMapWords());
+//        System.out.println(user.getMapWords());
         Map<String, Double> mapUser = user.getMapTFIDF();
 //        System.out.println(printWordList(user.getWordList()));
-        System.err.println(mapUser);
+//        System.err.println(mapUser);
         return getTop1002(mapUser);
+//        return mapUser;
     }
 
     public static String printWordList(WVTWordList v){
@@ -106,6 +161,22 @@ public class Token {
         return s;
     }
 
+
+    public static Map<String, Double> getTopN(Map<String, Double> mapUser, int N) {
+        Map<String, Double> map =
+                sortByValues2(mapUser);
+        Map<String, Double> top100 = new HashMap<String, Double>();
+        Set set2 = map.entrySet();
+        Iterator iterator2 = set2.iterator();
+        int i = 0;
+        while (iterator2.hasNext() && i < N) {
+            Map.Entry me2 = (Map.Entry) iterator2.next();
+            top100.put((String) me2.getKey(), (Double) me2.getValue());
+            i++;
+        }
+//        System.err.println(top100);
+        return top100;
+    }
 
     public static Map<String, Double> getTop1002(Map<String, Double> mapUser) {
         Map<String, Double> map =

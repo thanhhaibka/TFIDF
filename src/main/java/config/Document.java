@@ -3,6 +3,7 @@ package config;
 import connectDB.Cassandra;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by pc on 04/08/2016.
@@ -12,10 +13,21 @@ public class Document implements Comparable<Document> {
     private String newsID;
     private Date accessTime;
     private String title;
+    private List<Topic> topics;
+    private boolean isSet;
 
     public Document(String newsID, Date accessTime){
         this.newsID= newsID;
         this.accessTime= accessTime;
+        this.isSet= false;
+    }
+
+    public void setTopics(){
+        this.topics= Cassandra.getInstance().getTopics(newsID);
+    }
+
+    public List<Topic> getTopics(){
+        return topics;
     }
 
     public String getTitle() {
@@ -28,10 +40,12 @@ public class Document implements Comparable<Document> {
 
     public Document(String newsID){
         this.newsID= newsID;
+        this.isSet= false;
     }
 
     public void setContent() {
         this.content= Cassandra.getInstance().getTextArticle(newsID);
+        this.isSet= true;
     }
 
 //    public void setTi() {
@@ -52,6 +66,14 @@ public class Document implements Comparable<Document> {
 
     public int compareTo(Document doc){
         return (this.accessTime.compareTo(doc.accessTime)<0? 1:(this.accessTime.compareTo(doc.accessTime)==0?0:1));
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o==null||o.getClass()!=this.getClass()) return false;
+        Document d= (Document)o;
+        if(d.getNewsID().equals(newsID)) return true;
+        return false;
     }
 
     public String toString(){

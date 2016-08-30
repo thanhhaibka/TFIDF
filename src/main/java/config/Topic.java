@@ -3,10 +3,14 @@ package config;
 /**
  * Created by pc on 04/08/2016.
  */
-public class Topic {
+public class Topic implements Comparable<Topic>{
     private String topicID;
     private String topicName;
     private String weight;
+
+    public Topic(){
+
+    }
 
     public Topic(String topicID, String topicName, String weight) {
         this.topicID = topicID;
@@ -43,7 +47,22 @@ public class Topic {
         return sum+"";
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o==null||o.getClass()!=this.getClass()) return false;
+        Topic t= (Topic)o;
+        if(t.getTopicName().equals(topicName)) return true;
+        return false;
+    }
+
     public String toString(){
         return "("+topicName+" ,"+ weight+")";
+    }
+
+    @Override
+    public int compareTo(Topic o) {
+        double w1= Double.parseDouble(this.weight);
+        double w2= Double.parseDouble(o.weight);
+        return w1<w2?-1:(w1==w2?0:1);
     }
 }

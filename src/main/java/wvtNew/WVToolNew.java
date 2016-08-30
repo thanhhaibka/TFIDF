@@ -54,8 +54,7 @@ public class WVToolNew extends WVTool {
 
         for (int i = 0; i < tokens.size(); i++) {
             WVTDocumentInfo var13 = new WVTDocumentInfo(i + 1 + "", "", "", "", i);
-            for (String s : tokens.get(i)
-                    ) {
+            for (String s : tokens.get(i)) {
                 var5.addWordOccurance(s);
             }
             var5.closeDocument(var13);
@@ -166,7 +165,7 @@ public class WVToolNew extends WVTool {
         WVTVectorCreator var9 = null;
         WVTWordVector var10 = null;
         ArrayList<TFVector> var16=new ArrayList<TFVector>();
-        int[] var15= new int[1000000];
+        int[] var15;
         for (int i = 0; i < tokens.size(); i++) {
             WVTDocumentInfo var13 = new WVTDocumentInfo(i + 1 + "", "", "", "", i);
             var9 = (WVTVectorCreator) var3.getComponentForStep("vectorcreation", var13);

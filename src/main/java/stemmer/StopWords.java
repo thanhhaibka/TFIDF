@@ -119,8 +119,7 @@ public class StopWords extends AbstractStopWordFilter{
         if(str== null) return true;
         else if(str.endsWith(".jpg")) return true;
         else if(str.length()==1) return true;
-//        else if (m_StopChars.contains(str.charAt(0))) return true;
-//        else if(m_StopChars.contains(str.charAt(0))) return true;
+        else if (m_StopChars.contains(str.charAt(0))) return true;
         else return m_Stopwords.contains(str.toLowerCase());
     }
 }

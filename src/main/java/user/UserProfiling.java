@@ -28,6 +28,10 @@ public class UserProfiling extends User {
         this.userID= userID;
     }
 
+    public UserProfiling(){
+
+    }
+
     public void setLongTerm(int num){
         List<Document> unsorted = Cassandra.getInstance().getDocs(userID);
 //        if(num <= unsorted.size()){
@@ -40,6 +44,15 @@ public class UserProfiling extends User {
 //        }
 //        setTF();
     }
+
+    public void setLongTerm3(String guid, String domain, int N){
+        this.longTerm= Cassandra.getInstance().getDocs(guid, domain, N);
+    }
+
+    public void setLongTerm2(int n){
+        this.longTerm= Cassandra.getInstance().getDocsLimitT(n);
+    }
+
     public void removeLongTerm(Document d) {
         longTerm.remove(d);
     }

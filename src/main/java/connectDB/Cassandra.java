@@ -2,6 +2,7 @@ package connectDB;
 
 import com.datastax.driver.core.*;
 import config.Document;
+import config.Topic;
 
 import java.util.*;
 
@@ -134,6 +135,19 @@ public class Cassandra {
         return s;
     }
 
+    public List<Topic> getTopics(String newsID){
+        String sql = "select * from  othernews.newscategoryscore where newsid =" + newsID + ";";
+        ArrayList<Topic> topics = new ArrayList<Topic>();
+        try {
+            Row row = Cassandra.getInstance().getSession().execute(sql).one();
+            for (int i = 0; i < 30; i++) {
+                topics.add(new Topic(i + "", Name.topics[i], row.getFloat(Name.topics[i]) + ""));
+            }
+        } catch (Exception e) {
+
+        }
+        return topics;
+    }
 
     public ArrayList<Date> getAccessTime(String guid) {
         ArrayList<Date> accessTime = new ArrayList<Date>();
@@ -150,10 +164,61 @@ public class Cassandra {
         return accessTime;
     }
 
+    public List<Document> getDocsLimitT(int threshold){
+        List<Document> documents = new ArrayList<Document>();
+        String cql= "select newsId from othernews.newsurl limit "+ threshold;
+        List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
+        rows.stream().forEach(i->
+                documents.add(new Document(i.getLong(0)+""))
+                );
+        return documents;
+    }
+
+    public List<Document> getDocs(String guid, String domain, int N){
+        List<Document> documents = new ArrayList<Document>();
+        Date date= new Date();
+        Date beginDate= new Date(date.getTime()- N* 1000* 60* 60*24l);
+        Set<Long> newsId= new HashSet<Long>();
+        String cql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
+        List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
+        rows.stream().forEach(i->{
+               String[] s1= i.getString(0).split("_");
+                String[] s2= s1[0].split("-");
+                if(s1[1].equals(domain)){
+                    Date d= new Date(Integer.parseInt(s2[0])-1900, Integer.parseInt(s2[1]), Integer.parseInt(s2[2]));
+                    if(d.after(beginDate)){
+                        try{
+
+                            String s = i.getString(0) + "_" + guid;
+                            String sql1 = "select newshis, access_time FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "';";
+                            List<Row> rows2 = Cassandra.getInstance().getSession().execute(sql1).all();
+                            for (Row r : rows2) {
+                                Map<Long, Integer> map = r.getMap(0, Long.class, Integer.class);
+                                for (Long l : map.keySet()) {
+                                    if(!newsId.contains(l)) newsId.add(l);
+                                }
+                            }
+                        }catch (Exception e){
+
+                        }
+                    }else{
+                        System.out.println(i.getString(0));
+                    }
+                }
+        });
+        for(Long s: newsId){
+            documents.add(new Document((s+"").trim()));
+        }
+        return documents;
+    }
+
     public List<Document> getDocs(String guid) {
         List<Document> documents = new ArrayList<Document>();
         String sql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
         List<Row> rows = Cassandra.getInstance().getSession().execute(sql).all();
+//        rows.stream().forEach(i->(
+//
+//                ));
         Set<Long> newsId= new HashSet<Long>();
         for (Row row : rows) {
             try{
@@ -181,8 +246,8 @@ public class Cassandra {
     public static void main(String[] args) {
 //        System.out.print(new Cassandra().getTextArticle("20160605232141191"));
         Date dateBegin = new Date(116, 6, 26, 13, 35, 32);
-        Date dateEnd = new Date(116, 7, 03, 0, 22, 07);
-        System.out.print(new Cassandra().getDocs("0"));
+        Date dateEnd = new Date(dateBegin.getTime()- 1*1000*60*60*24l);
+//        System.out.print(d.getMonth());
     }
 
 }
