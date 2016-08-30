@@ -35,7 +35,7 @@ public class Token {
         Map<String, String> mapWords= new HashMap<String, String>();
         for (int i = 0; i < stringList.size(); i++) {
             ArrayList<String> t = new ArrayList<String>();
-            sentences = stringList.get(i).replaceAll("\\<.*?>"," ").replaceAll("[.?*]"," ") ; //remove html
+            sentences = stringList.get(i).replaceAll("\\<.*?>",""); //remove html
             System.out.println(sentences);
             if(sentences!=null) {
                 String[] var1 = vietTokenizer.tokenize(sentences);
@@ -68,12 +68,6 @@ public class Token {
         UserProfiling userProfiling= new UserProfiling("6773553201908336650");
         List<String> stringList1 = new ArrayList<String>();
 //        stringList1.add(ConnectMySQL.getContentFromNewsIDByMYSQL("20160824142401973"));
-        User news = null;
-        try {
-            news = token.getUserVector(stringList1);
-        } catch (Exception e) {
-
-        }
         setProfile(userProfiling, token);
 //        Map<String, Integer> mapNews = news.getMap();
 //        System.out.println(getSimilar(setProfile(userProfiling, token), mapNews));

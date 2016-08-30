@@ -11,15 +11,32 @@ public class Document implements Comparable<Document> {
     private String content;
     private String newsID;
     private Date accessTime;
+    private String title;
 
     public Document(String newsID, Date accessTime){
         this.newsID= newsID;
         this.accessTime= accessTime;
     }
 
-    public void setContent() {
-        this.content= new Cassandra().getTextArticle(newsID);
+    public String getTitle() {
+        return Cassandra.getInstance().getTitle(newsID);
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Document(String newsID){
+        this.newsID= newsID;
+    }
+
+    public void setContent() {
+        this.content= Cassandra.getInstance().getTextArticle(newsID);
+    }
+
+//    public void setTi() {
+//        this.content= Cassandra.getInstance().getTextArticle(newsID);
+//    }
 
     public String getContent(){
         return content;

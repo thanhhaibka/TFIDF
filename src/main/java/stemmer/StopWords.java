@@ -3,16 +3,41 @@ package stemmer; /**
  */
 import edu.udo.cs.wvtool.generic.wordfilter.AbstractStopWordFilter;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class StopWords extends AbstractStopWordFilter{
     private static HashSet m_Stopwords = null;
 
     private static HashSet m_StopChars = null;
 
+    private static List<String> getStopWords(String path){
+        List<String> list= new ArrayList<String>();
+        try{
+            FileInputStream fileInputStream= new FileInputStream(path);
+            BufferedReader bufferedReader= new BufferedReader(new InputStreamReader(fileInputStream));
+            String line="";List<String> words= new ArrayList<String>();
+            while ((line=bufferedReader.readLine())!=null){
+                for(String s: line.split(" ")){
+                    list.add(s);
+                }
+            }
+//            list= new ArrayList<String>(words);
+        }catch (IOException e){
+
+        }
+        return list;
+    }
+
     private static String[] stopWords = new String[] {"ít","src","http","https","á", "à", "ạ", "á_à", "a_ha", "à_ơi", "ạ_ơi", "ai", "ái",
             "ai_ai", "ái_chà", "ái_dà", "ai_nấy", "alô", "a-lô", "amen", "áng", "anh", "ào", "ắt", "ắt_hẳn",
             "ắt_là", "âu_là", "ầu_ơ", "ấy", "bà", "bác", "bài", "bản", "bạn", "bằng", "bằng_ấy", "bằng_không",
+            "bằng_nấy", "bao_giờ", "bao_lâu", "bao_nả", "bao_nhiêu", "bập_bà_bập_bõm", "bập_bõm", "bất_kỳ",
             "bằng_nấy", "bao_giờ", "bao_lâu", "bao_nả", "bao_nhiêu", "bập_bà_bập_bõm", "bập_bõm", "bất_kỳ",
             "bất_chợt", "bất_cứ", "bắt_đầu_từ", "bất_đồ", "bất_giác", "bất_kể", "bất_kì", "bất_luận", "bất_nhược",
             "bất_quá", "bất_thình_lình", "bất_tử", "bấy", "bây_bẩy", "bay_biến", "bấy_chầy", "bây_chừ", "bấy_chừ",
@@ -63,7 +88,8 @@ public class StopWords extends AbstractStopWordFilter{
             "vung_thiên_địa", "vụt", "xa_xả", "xăm_xăm", "xăm_xắm", "xăm_xúi", "xềnh_xệch", "xệp", "xiết_bao", "xoẳn", "xoành_xoạch",
             "xoét", "xoẹt", "xon_xón", "xuất_kì_bất_ý", "xuất_kỳ_bất_ý", "xuể", "xuống", "ý", "ý_chừng", "ý_da", "cái", "cần", "chỉ",
             "chưa", "chuyện", "của", "đã", "đến_nỗi", "đều", "được", "không", "lúc", "mỗi", "một_cách", "nhiều", "nơi", "rất", "so",
-            "vừa", "cao", "quá", "hay", "lớn", "mới", "hơn", "thường", "hoặc", "nh", "ngoài_ra", "hoàn_toàn", "thì_thôi", "ra_sao"
+            "vừa", "cao", "quá", "hay", "lớn", "mới", "chắc_chắn", "liên_quan", "hơn", "thường", "hoặc", "nh", "ngoài_ra", "hoàn_toàn", "thì_thôi", "ra_sao"
+            ,"thứ", "sạch", "gặp", "khoảng", "..."
             };
     private static char[] stopChars= new char[]{'(',')',',','.',';','-','+','=','&',':','�',10,'<',39,
             '>','?', '…','“','”','!','"','#','$','{','}','/','*',92, '1','2','3','4','5','6','7','8','9','0','_','[',']'};
@@ -71,7 +97,7 @@ public class StopWords extends AbstractStopWordFilter{
     static {
         if (m_Stopwords == null) {
             m_Stopwords = new HashSet();
-
+//            ArrayList<String> stopW= getStopWords("")
             for (int i = 0; i < stopWords.length; i++) {
                 m_Stopwords.add(stopWords[i]);
             }
@@ -89,8 +115,11 @@ public class StopWords extends AbstractStopWordFilter{
     }
 
     public boolean isStopword(String str) {
-        if(str.endsWith(".jpg")) return true;
+
+        if(str== null) return true;
+        else if(str.endsWith(".jpg")) return true;
         else if(str.length()==1) return true;
+//        else if (m_StopChars.contains(str.charAt(0))) return true;
 //        else if(m_StopChars.contains(str.charAt(0))) return true;
         else return m_Stopwords.contains(str.toLowerCase());
     }

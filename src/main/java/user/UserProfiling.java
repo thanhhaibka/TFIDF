@@ -29,16 +29,19 @@ public class UserProfiling extends User {
     }
 
     public void setLongTerm(int num){
-        Cassandra cassandra= new Cassandra();
-        List<Document> unsorted= (List)cassandra.getDocs(userID);
-        sort(unsorted);
-        if(num <= unsorted.size()){
-            for(int i=0; i<num; i++){
-                longTerm.add(unsorted.get(i));
-            }
-        }else{
+        List<Document> unsorted = Cassandra.getInstance().getDocs(userID);
+//        if(num <= unsorted.size()){
+//            sort(unsorted);
+//            for(int i=0; i<num; i++){
+//                longTerm.add(unsorted.get(i));
+//            }
+//        }else{
             longTerm.addAll(unsorted);
-        }
+//        }
+//        setTF();
+    }
+    public void removeLongTerm(Document d) {
+        longTerm.remove(d);
     }
 
     public String getUserID() {
