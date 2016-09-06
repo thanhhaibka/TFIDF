@@ -89,7 +89,9 @@ public class StopWords extends AbstractStopWordFilter{
             "xoét", "xoẹt", "xon_xón", "xuất_kì_bất_ý", "xuất_kỳ_bất_ý", "xuể", "xuống", "ý", "ý_chừng", "ý_da", "cái", "cần", "chỉ",
             "chưa", "chuyện", "của", "đã", "đến_nỗi", "đều", "được", "không", "lúc", "mỗi", "một_cách", "nhiều", "nơi", "rất", "so",
             "vừa", "cao", "quá", "hay", "lớn", "mới", "chắc_chắn", "liên_quan", "hơn", "thường", "hoặc", "nh", "ngoài_ra", "hoàn_toàn", "thì_thôi", "ra_sao"
-            ,"thứ", "sạch", "gặp", "khoảng", "..."
+            ,"thứ", "sạch", "gặp", "khoảng", "...", "khiến", "gây", "mọi", "thêm", "cách", "cho_biết", "gần", "nay", "bên", "sử_dụng"
+            ,"dùng", "đáng", "nhỏ", "lớn", "đẩy", "kéo", "bỏ", "vô_cùng","thay_đổi", "đồng_thời","đầu", "cuối","chú_ý"
+            ,"dẫn", "đủ"
             };
     private static char[] stopChars= new char[]{'(',')',',','.',';','-','+','=','&',':','�',10,'<',39,
             '>','?', '…','“','”','!','"','#','$','{','}','/','*',92, '1','2','3','4','5','6','7','8','9','0','_','[',']'};

@@ -1,10 +1,12 @@
 package app;
 
 import clustering.KMean;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import config.Document;
 import config.Topic;
 import config.User;
 import connectDB.Cassandra;
+import connectDB.ConnectMySQL;
 import edu.udo.cs.wvtool.config.WVTConfiguration;
 import edu.udo.cs.wvtool.util.WVToolException;
 import edu.udo.cs.wvtool.wordlist.WVTWordList;
@@ -21,7 +23,7 @@ import java.util.*;
  * Created by pc on 29/07/2016.
  */
 public class Token {
-    static VietTokenizer vietTokenizer = new VietTokenizer();
+    VietTokenizer vietTokenizer = new VietTokenizer();
     private static String normalize(String var1) {
         String var2 = var1.toLowerCase();
         return var2;
@@ -61,18 +63,19 @@ public class Token {
         WVTWordList wordList = wvtn.createWordList(tokens, config);
         user.setWordList(wordList);
         user.setWordVectors(wvtn.createVector(tokens, config, wordList));
-        user.setMapWords(mapWords);
         user.setTfVector(wvtn.createVector1(tokens,config, wordList));
+        user.setMapWords(mapWords);
         return user;
     }
 
     public Map<String, Integer> getM(String newsID, Token token){
         List<String> stringList = new ArrayList<String>();
-        stringList.add(Cassandra.getInstance().getTextArticle("20160829224731575"));
+        stringList.add(Cassandra.getInstance().getTextArticle(newsID));
         Map<String, Integer> mapNews= new HashMap<String, Integer>();
         try{
             User news= token.getUserVector(stringList);
             mapNews= news.getMap();
+//            news.printWordList();
         }catch (Exception e){
 
         }
@@ -83,10 +86,15 @@ public class Token {
         Token token= new Token();
 //        ConnectMySQL.getInstance();
         Cassandra.getInstance();
-        UserProfiling userProfiling= new UserProfiling();
-        List<String> stringList= new ArrayList<String>();
-        userProfiling.setLongTerm3("2885620731906312862", "kenh14.vn", 7);
-        System.out.println(userProfiling.getLongTerm());
+        ConnectMySQL.getInstance();
+        List<String> newsIDs= ConnectMySQL.getInstance().getNewNewsInNumDay(1);
+        for(String newsId: newsIDs){
+            if(Cassandra.getInstance().getMap(newsId)){
+                token.getKeyWords(newsId, token);
+            }
+        }
+//        List<String> stringList= new ArrayList<String>();
+//        System.out.println(userProfiling.getLongTerm());
 //        userProfiling.setLongTerm2(2000);
 //        int i=0;
 //        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
@@ -128,14 +136,56 @@ public class Token {
         System.out.println("Done");
     }
 
-    public static Map<String, Double> setProfile(UserProfiling userProfiling, Token token) throws SQLException, ClassNotFoundException, WVToolException, IOException {
+    public Map<String, Integer> getKeyWords(String newsId, Token token){
+        if (newsId == null || newsId.length() == 0) return null;
+        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
         List<String> stringList= new ArrayList<String>();
-        userProfiling.setLongTerm(10);
+        String s= Cassandra.getInstance().getTextArticle(newsId);
+        User user = new User();
+        if(s==""){
+            try{
+                s= ConnectMySQL.getInstance().getContentFromNewsIDByMYSQL(newsId);
+                stringList.add(s);
+                user= token.getUserVector(stringList);
+                Map<String, Integer> m= getTopNInt(user.getMap(), 100);
+                String[] s1= ConnectMySQL.getInstance().getOther(newsId);
+                token.insert(newsId, m, s1[2], s1[1], s1[0], s1[3]);
+            }catch (Exception e){
+
+            }
+        }else{
+            try{
+                stringList.add(s);
+                user= token.getUserVector(stringList);
+                Map<String, Integer> m= getTopNInt(user.getMap(), 100);
+                token.update(newsId, m);
+            }catch (Exception e){
+
+            }
+
+        }
+        return getKeyWords;
+    }
+
+    public void insert(String newsId, Map<String, Integer> keyWords, String content, String sapo, String title, String url){
+        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "newsurl").value("newsid", Long.parseLong(newsId))
+                .value("title", title).value("url", url).value("content", content).value("sapo", sapo).value("keyword",keyWords).ifNotExists();
+        Cassandra.getInstance().getSession().execute(exampleQuery);
+    }
+
+    public void update(String newsId, Map<String, Integer> keyWords) {
+        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "newsurl")
+                .with(QueryBuilder.set("keyword", keyWords)).where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
+        Cassandra.getInstance().getSession().execute(exampleQuery);
+    }
+
+    public static Map<String, Integer> setProfile(UserProfiling userProfiling, Token token) throws SQLException, ClassNotFoundException, WVToolException, IOException {
+        List<String> stringList= new ArrayList<String>();
+        userProfiling.setLongTerm3("2885620731906312862", "kenh14.vn", 7);
         int i=0;
         Set<Document> docs = new HashSet(userProfiling.getLongTerm());
         for (Document d : docs) {
             d.setContent();
-//            System.out.println(i + " " + d.getNewsID() + " "+ d.getTitle());
             String s = d.getContent();
             if (s.isEmpty()) {
                 userProfiling.removeLongTerm(d);
@@ -145,12 +195,8 @@ public class Token {
             ++i;
         }
         User user= token.getUserVector(stringList);
-//        System.out.println(user.getMapWords());
-        Map<String, Double> mapUser = user.getMapTFIDF();
-//        System.out.println(printWordList(user.getWordList()));
-//        System.err.println(mapUser);
-        return getTop1002(mapUser);
-//        return mapUser;
+        Map<String, Integer> mapUser = user.getMap();
+        return getTopNInt(mapUser, 100);
     }
 
     public static String printWordList(WVTWordList v){
@@ -175,6 +221,21 @@ public class Token {
             i++;
         }
 //        System.err.println(top100);
+        return top100;
+    }
+
+    public static Map<String, Integer> getTopNInt(Map<String, Integer> mapUser, int N) {
+        Map<String, Integer> map =
+                sortByValues(mapUser);
+        Map<String, Integer> top100 = new HashMap<String, Integer>();
+        Set set2 = map.entrySet();
+        Iterator iterator2 = set2.iterator();
+        int i = 0;
+        while (iterator2.hasNext() && i < N) {
+            Map.Entry me2 = (Map.Entry) iterator2.next();
+            top100.put((String) me2.getKey(), (Integer) me2.getValue());
+            i++;
+        }
         return top100;
     }
 

@@ -167,7 +167,7 @@ public class WVToolNew extends WVTool {
         ArrayList<TFVector> var16=new ArrayList<TFVector>();
         int[] var15;
         for (int i = 0; i < tokens.size(); i++) {
-            WVTDocumentInfo var13 = new WVTDocumentInfo(i + 1 + "", "", "", "", i);
+            WVTDocumentInfo var13 = new WVTDocumentInfo(i  + "", "", "", "", i);
             var9 = (WVTVectorCreator) var3.getComponentForStep("vectorcreation", var13);
 
             for (String s : tokens.get(i)) {

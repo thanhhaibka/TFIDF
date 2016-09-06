@@ -111,6 +111,18 @@ public class Cassandra {
         return ar.get(0).getLong(0);
     }
 
+    public boolean getMap(String newsID){
+        String sql = "select keyword from  othernews.newsurl where newsid =" + newsID + ";";
+        Map<String, Integer> m= new HashMap<>();
+        try {
+            Row row = Cassandra.getInstance().getSession().execute(sql).one();
+            m= row.getMap(0, String.class, Integer.class);
+        } catch (Exception e) {
+
+        }
+        return m.isEmpty();
+    }
+
     public String getTextArticle(String newsID) {
         String sql = "select content,sapo,title from  othernews.newsurl where newsid =" + newsID + ";";
         String s = "";
@@ -185,10 +197,11 @@ public class Cassandra {
                String[] s1= i.getString(0).split("_");
                 String[] s2= s1[0].split("-");
                 if(s1[1].equals(domain)){
-                    Date d= new Date(Integer.parseInt(s2[0])-1900, Integer.parseInt(s2[1]), Integer.parseInt(s2[2]));
+                    Date d= new Date(Integer.parseInt(s2[0])-1900, Integer.parseInt(s2[1])-1, Integer.parseInt(s2[2]));
+//                    System.err.println(d);
                     if(d.after(beginDate)){
+                        System.err.println(i.getString(0));
                         try{
-
                             String s = i.getString(0) + "_" + guid;
                             String sql1 = "select newshis, access_time FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "';";
                             List<Row> rows2 = Cassandra.getInstance().getSession().execute(sql1).all();
