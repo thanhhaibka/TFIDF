@@ -1,9 +1,7 @@
 package app;
 
-import clustering.KMean;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import config.Document;
-import config.Topic;
 import config.User;
 import connectDB.Cassandra;
 import connectDB.ConnectMySQL;
@@ -15,7 +13,7 @@ import user.UserProfiling;
 import vn.hus.nlp.tokenizer.VietTokenizer;
 import wvtNew.WVToolNew;
 
-import java.io.*;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -86,13 +84,21 @@ public class Token {
         Token token= new Token();
 //        ConnectMySQL.getInstance();
         Cassandra.getInstance();
-        ConnectMySQL.getInstance();
-        List<String> newsIDs= ConnectMySQL.getInstance().getNewNewsInNumDay(1);
-        for(String newsId: newsIDs){
-            if(Cassandra.getInstance().getMap(newsId)){
-                token.getKeyWords(newsId, token);
-            }
-        }
+//        ConnectMySQL.getInstance();
+        UserProfiling userProfiling= new UserProfiling();
+        Map<String, Double> mapUser= setProfile(userProfiling, token, "3602807441906312862", "genk.vn");
+        System.out.println(mapUser);
+//        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
+//        List<String> newsIDs= ConnectMySQL.getInstance().getNewNewsInNumDay(1);
+//        for(String newsId: newsIDs){
+////            if(Cassandra.getInstance().getMap(newsId)){
+////                token.getKeyWords(newsId, token);
+////            }
+//
+//        }
+//        System.out.println(token.cosinImprove(mapUser, getKeyWords));
+
+//        token.insertToCass("6773553201908336650", "kenh14.vn", token);
 //        List<String> stringList= new ArrayList<String>();
 //        System.out.println(userProfiling.getLongTerm());
 //        userProfiling.setLongTerm2(2000);
@@ -134,6 +140,47 @@ public class Token {
 //        s.flush();
 //        System.out.println(getTopN(m, 200));
         System.out.println("Done");
+    }
+
+    public void insertToCass(String guid, String domain, Token token) {
+        UserProfiling userProfiling = new UserProfiling();
+        User user = token.setUser(userProfiling, token, guid, domain);
+        Map<String, Double> mapIDF = getTop1002(user.getMapTFIDF());
+        Map<String, String> mapKeys = new HashMap<>();
+        Map<String, String> mapKeysTemp = user.getMapWords();
+        for (String s : mapIDF.keySet()) {
+            if (mapKeysTemp.containsKey(s)) {
+                mapKeys.put(s, mapKeysTemp.get(s));
+            }
+        }
+
+        System.out.println(mapKeys);
+        String guid_domain = guid + "_" + domain;
+//        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "guid_key_word").value("guid_domain", guid_domain)
+//                .value("keyword", mapIDF).value("mapword", mapKeys).ifNotExists();
+//        Cassandra.getInstance().getSession().execute(exampleQuery);
+    }
+
+    public User setUser(UserProfiling userProfiling, Token token, String guid, String domain) {
+        List<String> stringList = new ArrayList<String>();
+        userProfiling.setLongTerm3(guid, domain, 7);
+        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
+        for (Document d : docs) {
+            d.setContent();
+            String s = d.getContent();
+            if (s.isEmpty()) {
+                userProfiling.removeLongTerm(d);
+            } else {
+                stringList.add(s);
+            }
+        }
+        User user = new User();
+        try {
+            user = token.getUserVector(stringList);
+        } catch (Exception e) {
+
+        }
+        return user;
     }
 
     public Map<String, Integer> getKeyWords(String newsId, Token token){
@@ -179,12 +226,13 @@ public class Token {
         Cassandra.getInstance().getSession().execute(exampleQuery);
     }
 
-    public static Map<String, Integer> setProfile(UserProfiling userProfiling, Token token) throws SQLException, ClassNotFoundException, WVToolException, IOException {
+    public static Map<String, Double> setProfile(UserProfiling userProfiling, Token token, String guid, String domain) throws SQLException, ClassNotFoundException, WVToolException, IOException {
         List<String> stringList= new ArrayList<String>();
-        userProfiling.setLongTerm3("2885620731906312862", "kenh14.vn", 7);
-        int i=0;
+        userProfiling.setLongTerm3(guid, domain, 7);
+
         Set<Document> docs = new HashSet(userProfiling.getLongTerm());
         for (Document d : docs) {
+            System.out.println(d.getNewsID()+" "+d.getTitle());
             d.setContent();
             String s = d.getContent();
             if (s.isEmpty()) {
@@ -192,11 +240,10 @@ public class Token {
             } else {
                 stringList.add(s);
             }
-            ++i;
         }
         User user= token.getUserVector(stringList);
-        Map<String, Integer> mapUser = user.getMap();
-        return getTopNInt(mapUser, 100);
+        Map<String, Double> mUser = getTopN(user.getMapTFIDF(), 100);
+        return mUser;
     }
 
     public static String printWordList(WVTWordList v){
@@ -311,7 +358,6 @@ public class Token {
         return sortedHashMap;
     }
 
-
     public static double getSimilar(Map<String, Integer> mapUser, Map<String, Integer> mapNews) {
         for (String s1 : mapNews.keySet()) {
             if (mapUser.containsKey(s1)) {
@@ -363,12 +409,15 @@ public class Token {
         return sim;
     }
 
-    public double cosin(Map<String, Integer> mapUser, Map<String, Integer> mapNews) {
+    public double cosinImprove(Map<String, Double> mapUser, Map<String, Integer> mapNews) {
+
+        Map<String, Double> mapNewsTemp = new HashMap<>();
         for (String s1 : mapNews.keySet()) {
             if (mapUser.containsKey(s1)) {
                 //Do nothing
+                System.err.print(s1+" ");
             } else {
-                mapUser.put(s1, 0);
+                mapUser.put(s1, 0.0);
             }
         }
         for (String s1 : mapUser.keySet()) {
@@ -378,16 +427,22 @@ public class Token {
                 mapNews.put(s1, 0);
             }
         }
+        double sum1 = 0, sum2 = 0;
+        for (String s1 : mapUser.keySet()) {
+            sum1 += mapUser.get(s1);
+            sum2 += mapNews.get(s1);
+        }
+        for (String s1 : mapUser.keySet()) {
+            mapUser.put(s1, mapUser.get(s1) / sum1);
+            mapNewsTemp.put(s1, mapNews.get(s1) / sum2);
+        }
+        System.err.println(mapUser);
+        System.out.println(mapNewsTemp);
+        int n = mapUser.size();
         double product = 0, square1 = 0, square2 = 0;
         for (String s1 : mapNews.keySet()) {
-            square1 += Math.pow(mapNews.get(s1), 2);
-            for (String s2 : mapUser.keySet()) {
-                if (s1.equals(s2)) {
-                    square2 += Math.pow(mapUser.get(s2), 2);
-                    product += mapNews.get(s1) * mapUser.get(s2);
-                }
-            }
+            product += Math.cos(Math.PI/2 * (Math.abs(mapUser.get(s1) - mapNewsTemp.get(s1))));
         }
-        return product / Math.sqrt(square1 * square2);
+        return product / n;
     }
 }

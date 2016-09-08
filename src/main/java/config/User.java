@@ -59,16 +59,35 @@ public class User {
 
     public Map<String, Double> getMapTFIDF(){
         Map<String, Double> m= new HashMap<String, Double>();
-        for(WVTWordVector v: wordVectors){
-            Map<String, Double> map= new HashMap<String, Double>();
-            double[] var= v.getValues();
-            for(int var1=0; var1<var.length; var1++){
-                if(var[var1]!=0.0){
-                    map.put(this.wordList.getWord(var1), var[var1]);
+        if(wordVectors.size()==1){
+            int max=0;
+            int[] var = tfVector.get(0).getVector();
+            for (int var1 = 0; var1 < var.length; var1++) {
+                if (var[var1] >max) {
+                    max=var[var1];
                 }
             }
+            for (int var1 = 0; var1 < var.length; var1++) {
+                if (var[var1]!=0) {
+                    double d= var[var1]*1.0/max;
+                    m.put(this.wordList.getWord(var1), d);
+                }
+            }
+        }else if(wordVectors.size()==0){
+            return m;
+        }
+        else{
+            for(WVTWordVector v: wordVectors){
+                Map<String, Double> map= new HashMap<String, Double>();
+                double[] var= v.getValues();
+                for(int var1=0; var1<var.length; var1++){
+                    if(var[var1]!=0.0){
+                        map.put(this.wordList.getWord(var1), var[var1]);
+                    }
+                }
 //            System.out.println(v.getWvtDocumentInfo().getSourceName());
-            m= merge2(map, m);
+                m= merge2(map, m);
+            }
         }
 //        System.out.println(m);
         return m;

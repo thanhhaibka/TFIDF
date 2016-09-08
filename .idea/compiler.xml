@@ -25,8 +25,8 @@
         <module name="TFIDF" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="TFIDF" target="1.6" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="TFIDF" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

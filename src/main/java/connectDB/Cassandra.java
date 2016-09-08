@@ -123,6 +123,18 @@ public class Cassandra {
         return m.isEmpty();
     }
 
+    public Map<String, Integer> getMapWord(String newsID){
+        String sql = "select keyword from  othernews.newsurl where newsid =" + newsID + ";";
+        Map<String, Integer> m= new HashMap<>();
+        try {
+            Row row = Cassandra.getInstance().getSession().execute(sql).one();
+            m= row.getMap(0, String.class, Integer.class);
+        } catch (Exception e) {
+
+        }
+        return m;
+    }
+
     public String getTextArticle(String newsID) {
         String sql = "select content,sapo,title from  othernews.newsurl where newsid =" + newsID + ";";
         String s = "";
@@ -186,6 +198,28 @@ public class Cassandra {
         return documents;
     }
 
+
+    public List<String> getContent(List<String> newsIds){
+        List<String> list= new ArrayList<>();
+        newsIds.stream().forEach(i->{
+            try{
+                String cql = "select content,sapo,title from othernews.newsurl where newsid= "+i+" ;";
+                Row row= Cassandra.getInstance().getSession().execute(cql).one();
+                list.add(row.getString(0)+" "+row.getString(1)+" "+ row.getString(2));
+            }catch (Exception e){
+
+            }
+        });
+        return list;
+    }
+    public List<String> getGuids(){
+        List<String> list= new ArrayList<>();
+        String cql = "select guid from othernews.categoryview";
+        List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
+        rows.stream().forEach(i->list.add(i.getLong(0)+""));
+        return list;
+    }
+
     public List<Document> getDocs(String guid, String domain, int N){
         List<Document> documents = new ArrayList<Document>();
         Date date= new Date();
@@ -200,7 +234,7 @@ public class Cassandra {
                     Date d= new Date(Integer.parseInt(s2[0])-1900, Integer.parseInt(s2[1])-1, Integer.parseInt(s2[2]));
 //                    System.err.println(d);
                     if(d.after(beginDate)){
-                        System.err.println(i.getString(0));
+//                        System.err.println(i.getString(0));
                         try{
                             String s = i.getString(0) + "_" + guid;
                             String sql1 = "select newshis, access_time FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "';";
@@ -215,7 +249,7 @@ public class Cassandra {
 
                         }
                     }else{
-                        System.out.println(i.getString(0));
+//                        System.out.println(i.getString(0));
                     }
                 }
         });

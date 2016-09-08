@@ -17,10 +17,17 @@ public class Name {
 //	public static String password = "JSOGAXKYTDW5CX3";
 	public static String password = "JSOGAXKYTDW5CX3";
 	public static String APIgetContentNews = "http://192.168.3.158:1607/url?link=";
+
+	public static String regex = "@}-";
 	public static String domain_soha = "soha.vn";
 	public static String domain_kenh14 = "kenh14.vn";
 	public static String domain_afamily = "afamily.vn";
 	public static String domain_gamek = "gamek.vn";
+	public static String domain_autopro = "autopro.com.vn";
+	public static String domain_genk = "genk.vn";
+	public static String domain_cafebiz = "cafebiz.vn";
+	public static String domain_cafef = "cafef.vn";
+
 	public static String usernameCass = "chienpq";
 	public static String passwordCass = "chienptit1803";
 
