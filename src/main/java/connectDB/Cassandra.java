@@ -173,20 +173,20 @@ public class Cassandra {
         return topics;
     }
 
-    public ArrayList<Date> getAccessTime(String guid) {
-        ArrayList<Date> accessTime = new ArrayList<Date>();
-        String sql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
-        List<Row> rows = Cassandra.getInstance().getSession().execute(sql).all();
-        for (Row row : rows) {
-            String s = row.getString(0) + "_" + row.getLong(1);
-            String sql1 = "select * FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "' ALLow filtering;";
-            List<Row> rows2 = Cassandra.getInstance().getSession().execute(sql1).all();
-            for (Row r : rows2) {
-                accessTime.add((Date) r.getObject(2));
-            }
-        }
-        return accessTime;
-    }
+//    public ArrayList<Date> getAccessTime(String guid) {
+//        ArrayList<Date> accessTime = new ArrayList<Date>();
+//        String sql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
+//        List<Row> rows = Cassandra.getInstance().getSession().execute(sql).all();
+//        for (Row row : rows) {
+//            String s = row.getString(0) + "_" + row.getLong(1);
+//            String sql1 = "select * FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "' ALLow filtering;";
+//            List<Row> rows2 = Cassandra.getInstance().getSession().execute(sql1).all();
+//            for (Row r : rows2) {
+//                accessTime.add((Date) r.getObject(2));
+//            }
+//        }
+//        return accessTime;
+//    }
 
     public List<Document> getDocsLimitT(int threshold){
         List<Document> documents = new ArrayList<Document>();

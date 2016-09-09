@@ -3,6 +3,8 @@ package hadoop;
 /**
  * Created by pc on 07/09/2016.
  */
+
+import com.vcc.bigdata.logprs.parquet.AdsParquetInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -14,9 +16,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import com.vcc.bigdata.logprs.parquet.AdsParquetInputFormat;
-
-import java.util.Date;
+import java.io.IOException;
 
 public class UpdateCass extends Configured implements Tool {
     public static void main(String[] args) throws Exception {
@@ -61,11 +61,19 @@ public class UpdateCass extends Configured implements Tool {
         for (int i = Integer.parseInt(arg[0]); i <= Integer.parseInt(arg[1]); i++) {
             String temp = input;
             if (i < 10)
-                AdsParquetInputFormat.addInputPath(job,
-                        new Path("hdfs://" + "192.168.23.130" + ":50070/data/Parquet/PageViewV1/" + temp  + i));
+                try {
+                    AdsParquetInputFormat.addInputPath(job,
+                            new Path("hdfs://" + "192.168.23.130" + ":9000/data/Parquet/PageViewV1/" + temp + "0" + i));
+                } catch (IOException e) {
+
+                }
             else
+                try {
                 AdsParquetInputFormat.addInputPath(job,
-                        new Path("hdfs://" + "192.168.23.95" + ":50070/data/Parquet/PageViewV1/" + temp + i));
+                        new Path("hdfs://" + "192.168.23.95" + ":50070/data/Parquet/PageViewV1/" + temp + "0" + i));
+                } catch (IOException e) {
+
+                }
         }
         FileOutputFormat.setOutputPath(job, new Path("/user/haint/"+arg[3]));
         return job.waitForCompletion(true) ? 0 : 1;

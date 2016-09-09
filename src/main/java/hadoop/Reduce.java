@@ -26,7 +26,6 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
         if (guid == 0 || guid == -1)
             return;
         String domain = tm[1];
-        long timecookie = Long.parseLong(tm[2]);
 //        Map<Long, String> hm1 = new HashMap<Long, String>();
 //        Update upd = QueryBuilder.update(Name.table);
         List<String> newsIds= new ArrayList<>();

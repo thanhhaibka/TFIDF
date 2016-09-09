@@ -21,7 +21,10 @@ import java.util.*;
  * Created by pc on 29/07/2016.
  */
 public class Token {
-    VietTokenizer vietTokenizer = new VietTokenizer();
+
+    public Token(){
+        VCTokenizer.getInstance();
+    }
     private static String normalize(String var1) {
         String var2 = var1.toLowerCase();
         return var2;
@@ -39,7 +42,7 @@ public class Token {
 //            System.out.println(sentences);
             if(sentences!=null) {
                 try{
-                    String[] var1 = vietTokenizer.tokenize(sentences);
+                    String[] var1 = VCTokenizer.getInstance().getSegmenter().segment(sentences).split(" ");
                     for (String var2 : var1) {
                         String[] var3 = var2.split("\\s+");
                         for (String var4 : var3) {
