@@ -4,6 +4,7 @@ import connectDB.Cassandra;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pc on 04/08/2016.
@@ -15,6 +16,15 @@ public class Document implements Comparable<Document> {
     private String title;
     private List<Topic> topics;
     private boolean isSet;
+    private Map<String, Double> mapWords;
+
+    public Map<String, Double> getMapWords() {
+        return mapWords;
+    }
+
+    public void setMapWords() {
+        this.mapWords = Cassandra.getInstance().getMapWord(newsID);
+    }
 
     public Document(String newsID, Date accessTime){
         this.newsID= newsID;

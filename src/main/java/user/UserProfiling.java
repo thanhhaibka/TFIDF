@@ -49,6 +49,10 @@ public class UserProfiling extends User {
         this.longTerm= Cassandra.getInstance().getDocs(guid, domain, N);
     }
 
+    public void setLongTerm3(String guid, String domain, int begin, int end){
+        this.longTerm= Cassandra.getInstance().getDocs(guid, domain, begin, end);
+    }
+
     public void setLongTerm2(int n){
         this.longTerm= Cassandra.getInstance().getDocsLimitT(n);
     }
