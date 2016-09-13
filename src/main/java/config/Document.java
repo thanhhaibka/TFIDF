@@ -17,6 +17,15 @@ public class Document implements Comparable<Document> {
     private List<Topic> topics;
     private boolean isSet;
     private Map<String, Double> mapWords;
+    private Map<String, String> mapPairs;
+
+    public Map<String, String> getMapPairs() {
+        return mapPairs;
+    }
+
+    public void setMapPairs() {
+        this.mapPairs = Cassandra.getInstance().getWordPair(newsID);;
+    }
 
     public Map<String, Double> getMapWords() {
         return mapWords;

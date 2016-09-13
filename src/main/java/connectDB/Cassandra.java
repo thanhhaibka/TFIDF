@@ -123,6 +123,18 @@ public class Cassandra {
         return m.isEmpty();
     }
 
+    public Map<String, String> getWordPair(String newsID){
+        String sql = "select mapword from  othernews.newsurl where newsid =" + newsID + ";";
+        Map<String, String> m= new HashMap<>();
+        try {
+            Row row = Cassandra.getInstance().getSession().execute(sql).one();
+            m= row.getMap(0, String.class, String.class);
+        } catch (Exception e) {
+
+        }
+        return m;
+    }
+
     public Map<String, Double> getMapWord(String newsID){
         String sql = "select keyword from  othernews.newsurl where newsid =" + newsID + ";";
         Map<String, Double> m= new HashMap<>();
@@ -199,13 +211,12 @@ public class Cassandra {
     }
 
 
-    public List<String> getContent(List<String> newsIds){
-        List<String> list= new ArrayList<>();
+    public List<Document> getContent(List<String> newsIds){
+        List<Document> list= new ArrayList<>();
         newsIds.stream().forEach(i->{
             try{
-                String cql = "select content,sapo,title from othernews.newsurl where newsid= "+i+" ;";
-                Row row= Cassandra.getInstance().getSession().execute(cql).one();
-                list.add(row.getString(0)+" "+row.getString(1)+" "+ row.getString(2));
+                Document d= new Document(i);
+                d.setContent();
             }catch (Exception e){
 
             }

@@ -79,7 +79,9 @@ public class Token {
             if (!document.getMapWords().isEmpty()) {
 //                System.err.println("true");
                 ArrayList<String> t = new ArrayList<String>();
+
                 for (String s : document.getMapWords().keySet()) {
+                    mapWords.put(s, document.getMapPairs().get(s));
                     for (int p = 0; p < document.getMapWords().get(s); p++) {
                         t.add(s);
                     }
@@ -136,23 +138,23 @@ public class Token {
     public static void main (String[] args) throws SQLException, ClassNotFoundException, WVToolException, IOException {
         Token token= new Token();
 //        ConnectMySQL.getInstance();
-        Cassandra.getInstance();
-        long t= System.currentTimeMillis();
-        UserProfiling userProfiling= new UserProfiling();
-        Map<String, Double> keys= token.getLongTerm(userProfiling, token, "2885620731906312862", "kenh14.vn", 1);
-        System.out.println(System.currentTimeMillis()- t);
+//        Cassandra.getInstance();
+//        long t= System.currentTimeMillis();
+//        UserProfiling userProfiling= new UserProfiling();
+//        Map<String, Double> keys= token.getLongTerm(userProfiling, token, "2885620731906312862", "kenh14.vn", 1);
+//        System.out.println(System.currentTimeMillis()- t);
 
 //        System.out.println(Cassandra.getInstance().getMapWord("20160824121617934"));
 
-//        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
-//        List<String> newsIDs = ConnectMySQL.getInstance().getNewNewsInNumDay(30);
-//        System.out.println(newsIDs.size());
-//        for (String newsId : newsIDs) {
-//            System.out.println(newsId);
-//            if (Cassandra.getInstance().getMap(newsId)) {
-//                token.getKeyWords(newsId, token);
-//            }
-//        }
+        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
+        List<String> newsIDs = ConnectMySQL.getInstance().getNewNewsInNumDay(30);
+        System.out.println(newsIDs.size());
+        for (String newsId : newsIDs) {
+            System.out.println(newsId);
+            if (Cassandra.getInstance().getMap(newsId)) {
+                token.getKeyWords(newsId, token);
+            }
+        }
 //        System.out.println(token.cosinImprove(mapUser, getKeyWords));
 
 //        token.insertToCass("6773553201908336650", "kenh14.vn", token);
@@ -256,6 +258,7 @@ public class Token {
                 userProfiling.removeLongTerm(d);
             } else {
                 d.setMapWords();
+                d.setMapPairs();
                 stringList.add(d);
             }
         }
@@ -289,8 +292,15 @@ public class Token {
                 stringList.add(s);
                 user= token.getUserVector(stringList);
                 Map<String, Integer> m= getTopNInt(user.getMap(), 100);
+                Map<String, String> mapKeysTemp = user.getMapWords();
+                Map<String, String> mapKeys= new HashMap<>();
+                for (String s1 : m.keySet()) {
+                    if (mapKeysTemp.containsKey(s1)) {
+                        mapKeys.put(s1, mapKeysTemp.get(s1));
+                    }
+                }
                 String[] s1= ConnectMySQL.getInstance().getOther(newsId);
-                token.insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3]);
+                token.insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3], mapKeys);
             }catch (Exception e){
 
             }
@@ -299,8 +309,15 @@ public class Token {
                 stringList.add(s);
                 user= token.getUserVector(stringList);
                 Map<String, Integer> m= getTopNInt(user.getMap(), 100);
+                Map<String, String> mapKeysTemp = user.getMapWords();
+                Map<String, String> mapKeys= new HashMap<>();
+                for (String s1 : m.keySet()) {
+                    if (mapKeysTemp.containsKey(s1)) {
+                        mapKeys.put(s1, mapKeysTemp.get(s1));
+                    }
+                }
 //                System.out.println(m);
-                token.update(newsId, convert(m));
+                token.update(newsId, convert(m), mapKeys);
             }catch (Exception e){
 
             }
@@ -309,15 +326,15 @@ public class Token {
         return getKeyWords;
     }
 
-    public void insert(String newsId, Map<String, Double> keyWords, String content, String sapo, String title, String url) {
+    public void insert(String newsId, Map<String, Double> keyWords, String content, String sapo, String title, String url, Map<String, String> mapPair) {
         com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "newsurl").value("newsid", Long.parseLong(newsId))
-                .value("title", title).value("url", url).value("content", content).value("sapo", sapo).value("keyword",keyWords).ifNotExists();
+                .value("title", title).value("url", url).value("mapword", mapPair).value("content", content).value("sapo", sapo).value("keyword",keyWords).ifNotExists();
         Cassandra.getInstance().getSession().execute(exampleQuery);
     }
 
-    public void update(String newsId, Map<String, Double> keyWords) {
+    public void update(String newsId, Map<String, Double> keyWords, Map<String, String> mapPair) {
         com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "newsurl")
-                .with(QueryBuilder.set("keyword", keyWords)).where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
+                .with(QueryBuilder.set("keyword", keyWords)).and(QueryBuilder.set("mapword", mapPair)).where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
         Cassandra.getInstance().getSession().execute(exampleQuery);
     }
 
