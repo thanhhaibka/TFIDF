@@ -11,7 +11,7 @@
     </properties>
     <groupId>TFIDF</groupId>
     <artifactId>TFIDF</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>TFIDF</name>
     <url>http://maven.apache.org</url>

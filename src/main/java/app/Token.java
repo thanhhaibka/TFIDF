@@ -27,13 +27,15 @@ public class Token {
     }
 
     private void setListDocsNDay(int N){
+        long t = System.currentTimeMillis();
         List<String> newsIds= new ArrayList<>();
         try{
-            newsIds= ConnectMySQL.getInstance().getNewNewsInNumDay(N);
+            newsIds= ConnectMySQL.getInstance().getNewNewsInNumDay(N, "Kenh14");
         }catch (Exception e){
 
         }
         listDocsNDay= Cassandra.getInstance().getDocsLimitTDays(newsIds);
+        System.out.println("time init: " + (System.currentTimeMillis() - t));
     }
 
     private static String normalize(String var1) {
@@ -88,10 +90,8 @@ public class Token {
         Map<String, String> mapWords= new HashMap<String, String>();
         for (int i = 0; i < documentList.size(); i++) {
             Document document = documentList.get(i);
-            if(document.getContent()==""){
-
-            }else{
-                if (!document.getMapWords().isEmpty()) {
+//            System.err.println(documentList.get(i).getMapPairs());
+                if (document.isSet()) {
 //                System.err.println("true");
                     ArrayList<String> t = new ArrayList<String>();
 
@@ -125,8 +125,7 @@ public class Token {
                     }
                 }
             }
-        }
-//        System.out.println(tokens);
+        System.out.println("Token size " + tokens.size());
         WVTConfiguration config = new WVTConfiguration();
         WVToolNew wvtn = new WVToolNew(false);
         WVTWordList wordList = wvtn.createWordList(tokens, config);
@@ -153,10 +152,11 @@ public class Token {
 
     public static void main (String[] args) throws SQLException, ClassNotFoundException, WVToolException, IOException {
         Token token= new Token();
-        ConnectMySQL.getInstance();
+//        ConnectMySQL.getInstance();
         Cassandra.getInstance();
         long t= System.currentTimeMillis();
-        Map<String, Double> keys = token.getLongTerm( token, "2885620731906312862", "kenh14.vn", 6);
+        UserProfiling userProfiling = new UserProfiling();
+        Map<String, Double> keys = token.getLongTerm(userProfiling, token, "2885620731906312862", "kenh14.vn", 1);
         System.out.println(System.currentTimeMillis()- t);
 
 //        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
@@ -191,13 +191,13 @@ public class Token {
 ////        Cassandra.getInstance().getSession().execute(exampleQuery);
 //    }
 
-    public Map<String, Double> getLongTerm( Token token, String guid, String domain, int number) {
+    public Map<String, Double> getLongTerm(UserProfiling userProfiling, Token token, String guid, String domain, int number) {
         int M = 30 / number;
         double[] weights = {1, 0.9, 0.8, 0.7, 0.6, 0.5};
         Map<String, Double>[] temp = new Map[number];
 //        User []user= new User[N];
         for (int i = 0; i < number; i++) {
-            User user = token.setUser( token, guid, domain, M * i, M * (i + 1));
+            User user = token.setUser(userProfiling, token, guid, domain, 0, 7);
             temp[i] = getTopN(user.getMapTFIDF(), 100);
         }
         Set<String> words = new HashSet<>();
@@ -216,15 +216,29 @@ public class Token {
         return getTop1002(longTermWords);
     }
 
-    public User setUser( Token token, String guid, String domain, int begin, int end) {
-        List<Document> stringList = new ArrayList<Document>();
+    public User setUser(UserProfiling userProfiling, Token token, String guid, String domain, int begin, int end) {
+        List<Document> documentList = new ArrayList<Document>();
+//        Set<Document> documents= new HashSet<>();
         long t1= System.currentTimeMillis();
         Set<String> newsIDs= Cassandra.getInstance().getNewsIds(guid, domain, begin, end);
         for (String s : newsIDs) {
-            stringList.add(listDocsNDay.get(s));
+            if(listDocsNDay.containsKey(s)){
+                documentList.add(listDocsNDay.get(s));
+            }
         }
-//        userProfiling.setLongTerm3(guid, domain, begin, end);
-//        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
+        Set<Document> docs = new HashSet(documentList);
+        for (Document s : docs) {
+            try{
+                if(s.getContent()==""){
+                    documentList.remove(s);
+                }
+            }catch (Exception e){
+
+            }
+        }
+        System.out.println("size: " + documentList.size());
+
+        userProfiling.setLongTerm(documentList);
 
 //        for (Document d : docs) {
 //            stringList.add(d);
@@ -232,7 +246,7 @@ public class Token {
         System.err.println("time: "+(System.currentTimeMillis()- t1));
         User user = new User();
         try {
-            user = token.getUserVector1(stringList);
+            user = token.getUserVector1(documentList);
         } catch (Exception e) {
 
         }

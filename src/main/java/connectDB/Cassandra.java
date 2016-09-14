@@ -222,14 +222,17 @@ public class Cassandra {
 
     public Map<String, Document> getDocsLimitTDays(List<String> newsIds){
         Map<String,Document> documents = new HashMap<>();
+
         newsIds.stream().forEach(i->{
+            String s = "";
             try{
                 String cql = "select keyword, mapword, content,sapo,title from othernews.newsurl where newsid = " + i + ";";
                 Row r = Cassandra.getInstance().getSession().execute(cql).one();
                 Document d = new Document(i);
                 d.setMapWords(r.getMap(0, String.class, Double.class));
                 d.setMapPairs(r.getMap(1, String.class, String.class));
-                d.setContent(r.getString(2) + " " + r.getString(3) + " " + r.getString(4)+" ");
+                s=r.getString(2) + " " + r.getString(3) + " " + r.getString(4)+" ";
+                d.setContent(s);
                 documents.put(i, d);
             }catch (Exception e){
 

@@ -3,15 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="059f91e3-400c-4262-85ac-be6f7743b76e" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist" afterPath="$PROJECT_DIR$/dist" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.classpath" afterPath="$PROJECT_DIR$/.classpath" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.settings/org.eclipse.jdt.core.prefs" afterPath="$PROJECT_DIR$/.settings/org.eclipse.jdt.core.prefs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/app/Token.java" afterPath="$PROJECT_DIR$/src/main/java/app/Token.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/config/Document.java" afterPath="$PROJECT_DIR$/src/main/java/config/Document.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java" afterPath="$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java" afterPath="$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/hadoop/Reduce.java" afterPath="$PROJECT_DIR$/src/main/java/hadoop/Reduce.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/stemmer/StopWords.java" afterPath="$PROJECT_DIR$/src/main/java/stemmer/StopWords.java" />
     </list>
     <list id="facd11cb-a4fb-4edc-9d40-0801b48608ea" name="Failed commit: Default" comment="8/9" />
@@ -36,80 +33,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="UserProfiling.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/user/UserProfiling.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="83" column="51" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="51" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Document.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/config/Document.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-165">
-              <caret line="20" column="44" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
-              <folding>
-                <element signature="e#504#505#0" expanded="true" />
-                <element signature="e#667#668#0" expanded="true" />
-                <element signature="e#707#708#0" expanded="true" />
-                <element signature="e#1050#1051#0" expanded="true" />
-                <element signature="e#1124#1125#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Cassandra.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="115">
-              <caret line="223" column="55" selection-start-line="223" selection-start-column="55" selection-end-line="223" selection-end-column="55" />
-              <folding>
-                <element signature="method#numberRecode#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getMap#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getPair#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getWordPair#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getMapWord#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getTextArticle#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getTitle#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getTopics#0;class#Cassandra#0" expanded="false" />
-                <element signature="e#6702#6759#0" expanded="false" />
-                <element signature="method#getDocsLimitT#0;class#Cassandra#0" expanded="false" />
-                <element signature="method#getGuids#0;class#Cassandra#0" expanded="false" />
-                <element signature="e#9757#9763#0" expanded="true" />
-                <element signature="e#12418#12424#0" expanded="true" />
-                <element signature="method#getDocs#1;class#Cassandra#0" expanded="false" />
-                <element signature="method#getDocs#2;class#Cassandra#0" expanded="false" />
-                <marker date="1473825179089" expanded="false" signature="6812:6818" ph="&lt;~&gt;" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Reduce.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/hadoop/Reduce.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="39" column="48" selection-start-line="39" selection-start-column="48" selection-end-line="39" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Token.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/app/Token.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
+            <state relative-caret-position="405">
+              <caret line="233" column="17" selection-start-line="233" selection-start-column="17" selection-end-line="233" selection-end-column="17" />
               <folding>
+                <element signature="method#getUserVector#0;class#Token#0" expanded="false" />
+                <element signature="e#3690#3698#0" expanded="true" />
                 <element signature="method#convert#0;class#Token#0" expanded="false" />
                 <element signature="method#getKeyWords#0;class#Token#0" expanded="false" />
                 <element signature="method#insert#0;class#Token#0" expanded="false" />
                 <element signature="method#update#0;class#Token#0" expanded="false" />
-                <element signature="e#13036#13232#0" expanded="false" />
+                <element signature="e#13662#13858#0" expanded="false" />
                 <element signature="method#printWordList#0;class#Token#0" expanded="false" />
                 <element signature="method#getTopN#0;class#Token#0" expanded="false" />
                 <element signature="method#getTopNInt#0;class#Token#0" expanded="false" />
@@ -119,7 +55,103 @@
                 <element signature="method#sortByValues#0;class#Token#0" expanded="false" />
                 <element signature="method#getSimilar#0;class#Token#0" expanded="false" />
                 <element signature="method#cosinImprove#0;class#Token#0" expanded="false" />
-                <marker date="1473825258523" expanded="false" signature="13281:13289" ph="&lt;~&gt;" />
+                <marker date="1473838930727" expanded="false" signature="13907:13915" ph="&lt;~&gt;" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StopWords.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/stemmer/StopWords.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="93" column="106" selection-start-line="93" selection-start-column="106" selection-end-line="93" selection-end-column="106" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UserProfiling.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/user/UserProfiling.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="25" column="30" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="30" />
+              <folding>
+                <element signature="e#1713#1714#0" expanded="true" />
+                <element signature="e#1749#1750#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConnectMySQL.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
+              <folding>
+                <marker date="1473838280480" expanded="true" signature="1498:1669" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="2032:2181" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="2586:2727" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="2586:2740" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="2586:2768" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="3132:3285" ph="SELECT newsI... news_resource" />
+                <marker date="1473838280480" expanded="true" signature="3965:4053" ph="SELECT `titl... news_resource" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="User.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/config/User.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="72" column="30" selection-start-line="72" selection-start-column="28" selection-end-line="72" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Document.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/config/Document.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="22" column="11" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
+              <folding>
+                <element signature="e#629#630#0" expanded="true" />
+                <element signature="e#667#668#0" expanded="true" />
+                <element signature="e#830#831#0" expanded="true" />
+                <element signature="e#870#871#0" expanded="true" />
+                <element signature="e#1172#1173#0" expanded="true" />
+                <element signature="e#1246#1247#0" expanded="true" />
+                <element signature="e#2305#2306#0" expanded="true" />
+                <element signature="e#2335#2336#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Cassandra.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="343">
+              <caret line="234" column="31" selection-start-line="234" selection-start-column="31" selection-end-line="234" selection-end-column="31" />
+              <folding>
+                <element signature="method#numberRecode#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getMap#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getPair#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getWordPair#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getMapWord#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getTitle#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getTopics#0;class#Cassandra#0" expanded="false" />
+                <element signature="e#6702#6759#0" expanded="false" />
+                <element signature="method#getDocsLimitT#0;class#Cassandra#0" expanded="false" />
+                <element signature="method#getGuids#0;class#Cassandra#0" expanded="false" />
+                <element signature="e#9806#9812#0" expanded="true" />
+                <element signature="e#12467#12473#0" expanded="true" />
+                <element signature="method#getDocs#1;class#Cassandra#0" expanded="false" />
+                <element signature="method#getDocs#2;class#Cassandra#0" expanded="false" />
+                <marker date="1473828692080" expanded="false" signature="6812:6818" ph="&lt;~&gt;" />
               </folding>
             </state>
           </provider>
@@ -161,12 +193,12 @@
         <option value="$PROJECT_DIR$/src/main/java/user/UserProfiling.java" />
         <option value="$PROJECT_DIR$/src/main/java/hadoop/UpdateCass.java" />
         <option value="$PROJECT_DIR$/src/main/java/Spark/UserKeysSpark.java" />
+        <option value="$PROJECT_DIR$/src/main/java/hadoop/Reduce.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java" />
         <option value="$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java" />
         <option value="$PROJECT_DIR$/src/main/java/config/Document.java" />
         <option value="$PROJECT_DIR$/src/main/java/stemmer/StopWords.java" />
-        <option value="$PROJECT_DIR$/src/main/java/hadoop/Reduce.java" />
-        <option value="$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java" />
         <option value="$PROJECT_DIR$/src/main/java/app/Token.java" />
       </list>
     </option>
@@ -964,7 +996,7 @@
       <workItem from="1473305631566" duration="48956000" />
       <workItem from="1473751680345" duration="527000" />
       <workItem from="1473752233378" duration="9700000" />
-      <workItem from="1473817013319" duration="7844000" />
+      <workItem from="1473817013319" duration="14424000" />
     </task>
     <task id="LOCAL-00001" summary="30/8">
       <created>1472522982035</created>
@@ -1029,11 +1061,18 @@
       <option name="project" value="LOCAL" />
       <updated>1473821684857</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="14/9">
+      <created>1473825516958</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1473825516958</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="145060000" />
+    <option name="totallyTimeSpent" value="151640000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1097,7 +1136,8 @@
     <MESSAGE value="8/9" />
     <MESSAGE value="13/9" />
     <MESSAGE value="13/9_1" />
-    <option name="LAST_COMMIT_MESSAGE" value="13/9_1" />
+    <MESSAGE value="14/9" />
+    <option name="LAST_COMMIT_MESSAGE" value="14/9" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1399,50 +1439,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="980">
-          <caret line="229" column="0" selection-start-line="229" selection-start-column="0" selection-end-line="229" selection-end-column="0" />
-          <folding>
-            <marker date="1473820208692" expanded="true" signature="1498:1669" ph="SELECT newsI... news_resource" />
-            <marker date="1473820208692" expanded="true" signature="2032:2181" ph="SELECT newsI... news_resource" />
-            <marker date="1473820208692" expanded="true" signature="2571:2724" ph="SELECT newsI... news_resource" />
-            <marker date="1473820208692" expanded="true" signature="3404:3492" ph="SELECT `titl... news_resource" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/config/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-          <folding>
-            <element signature="e#489#490#0" expanded="true" />
-            <element signature="e#520#521#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/hadoop/UpdateCass.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="66" column="121" selection-start-line="66" selection-start-column="117" selection-end-line="66" selection-end-column="121" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stemmer/StopWords.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="105" column="13" selection-start-line="105" selection-start-column="13" selection-end-line="105" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1455,63 +1455,110 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/config/Document.java">
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-165">
-          <caret line="20" column="44" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
-          <folding>
-            <element signature="e#504#505#0" expanded="true" />
-            <element signature="e#667#668#0" expanded="true" />
-            <element signature="e#707#708#0" expanded="true" />
-            <element signature="e#1050#1051#0" expanded="true" />
-            <element signature="e#1124#1125#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/user/UserProfiling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="83" column="51" selection-start-line="83" selection-start-column="43" selection-end-line="83" selection-end-column="51" />
+        <state relative-caret-position="195">
+          <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/Cassandra.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="223" column="55" selection-start-line="223" selection-start-column="55" selection-end-line="223" selection-end-column="55" />
+        <state relative-caret-position="343">
+          <caret line="234" column="31" selection-start-line="234" selection-start-column="31" selection-end-line="234" selection-end-column="31" />
           <folding>
             <element signature="method#numberRecode#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getMap#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getPair#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getWordPair#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getMapWord#0;class#Cassandra#0" expanded="false" />
-            <element signature="method#getTextArticle#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getTitle#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getTopics#0;class#Cassandra#0" expanded="false" />
             <element signature="e#6702#6759#0" expanded="false" />
             <element signature="method#getDocsLimitT#0;class#Cassandra#0" expanded="false" />
             <element signature="method#getGuids#0;class#Cassandra#0" expanded="false" />
-            <element signature="e#9757#9763#0" expanded="true" />
-            <element signature="e#12418#12424#0" expanded="true" />
+            <element signature="e#9806#9812#0" expanded="true" />
+            <element signature="e#12467#12473#0" expanded="true" />
             <element signature="method#getDocs#1;class#Cassandra#0" expanded="false" />
             <element signature="method#getDocs#2;class#Cassandra#0" expanded="false" />
-            <marker date="1473825179089" expanded="false" signature="6812:6818" ph="&lt;~&gt;" />
+            <marker date="1473828692080" expanded="false" signature="6812:6818" ph="&lt;~&gt;" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/config/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="72" column="30" selection-start-line="72" selection-start-column="28" selection-end-line="72" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/config/Document.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="22" column="11" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
+          <folding>
+            <element signature="e#629#630#0" expanded="true" />
+            <element signature="e#667#668#0" expanded="true" />
+            <element signature="e#830#831#0" expanded="true" />
+            <element signature="e#870#871#0" expanded="true" />
+            <element signature="e#1172#1173#0" expanded="true" />
+            <element signature="e#1246#1247#0" expanded="true" />
+            <element signature="e#2305#2306#0" expanded="true" />
+            <element signature="e#2335#2336#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/connectDB/ConnectMySQL.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
+          <folding>
+            <marker date="1473838280480" expanded="true" signature="1498:1669" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="2032:2181" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="2586:2727" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="2586:2740" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="2586:2768" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="3132:3285" ph="SELECT newsI... news_resource" />
+            <marker date="1473838280480" expanded="true" signature="3965:4053" ph="SELECT `titl... news_resource" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/user/UserProfiling.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="25" column="30" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="30" />
+          <folding>
+            <element signature="e#1713#1714#0" expanded="true" />
+            <element signature="e#1749#1750#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stemmer/StopWords.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="93" column="106" selection-start-line="93" selection-start-column="106" selection-end-line="93" selection-end-column="106" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/app/Token.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="43" column="41" selection-start-line="43" selection-start-column="41" selection-end-line="43" selection-end-column="41" />
+        <state relative-caret-position="405">
+          <caret line="233" column="17" selection-start-line="233" selection-start-column="17" selection-end-line="233" selection-end-column="17" />
           <folding>
+            <element signature="method#getUserVector#0;class#Token#0" expanded="false" />
+            <element signature="e#3690#3698#0" expanded="true" />
             <element signature="method#convert#0;class#Token#0" expanded="false" />
             <element signature="method#getKeyWords#0;class#Token#0" expanded="false" />
             <element signature="method#insert#0;class#Token#0" expanded="false" />
             <element signature="method#update#0;class#Token#0" expanded="false" />
-            <element signature="e#13036#13232#0" expanded="false" />
+            <element signature="e#13662#13858#0" expanded="false" />
             <element signature="method#printWordList#0;class#Token#0" expanded="false" />
             <element signature="method#getTopN#0;class#Token#0" expanded="false" />
             <element signature="method#getTopNInt#0;class#Token#0" expanded="false" />
@@ -1521,7 +1568,7 @@
             <element signature="method#sortByValues#0;class#Token#0" expanded="false" />
             <element signature="method#getSimilar#0;class#Token#0" expanded="false" />
             <element signature="method#cosinImprove#0;class#Token#0" expanded="false" />
-            <marker date="1473825258523" expanded="false" signature="13281:13289" ph="&lt;~&gt;" />
+            <marker date="1473838930727" expanded="false" signature="13907:13915" ph="&lt;~&gt;" />
           </folding>
         </state>
       </provider>

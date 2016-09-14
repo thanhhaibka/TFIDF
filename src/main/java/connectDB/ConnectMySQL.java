@@ -79,6 +79,25 @@ public class ConnectMySQL {
 		return newsids;
 	}
 
+	public List< String> getNewNewsInNumDay(int T, String source){
+		List< String> newsids = new ArrayList<>();
+//		d.setDate(d.getHours() - 24);
+		String sql = "SELECT newsId, publishDate FROM  `news`.`news_resource` where publishDate BETWEEN DATE_SUB(NOW(), INTERVAL "+T+" DAY) AND NOW() " +
+				"and sourceNews= '"+source+"' and is_deleted=0 ;";
+		ResultSet rs= null;
+		try {
+			rs = conn.createStatement().executeQuery(sql);
+			while (rs.next()) {
+				newsids.add( rs.getString("newsId"));
+			}
+		}catch (Exception e){
+
+		}finally {
+
+		}
+		return newsids;
+	}
+
 	public List< String> getNewNewsInNumDay(int T){
 		List< String> newsids = new ArrayList<>();
 //		d.setDate(d.getHours() - 24);
