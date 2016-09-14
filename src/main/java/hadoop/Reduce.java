@@ -22,6 +22,7 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
     @Override
     protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         Iterator<Text> valuesIt = values.iterator();
+        Token token= new Token();
         String tm[] = key.toString().split(Name.regex);
         long guid = Long.parseLong(tm[0]);
         if (guid == 0 || guid == -1)
@@ -37,7 +38,6 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
         List<Document> docs= new ArrayList<>();
         if(!newsIds.isEmpty()){
             docs= Cassandra.getInstance().getContent(newsIds);
-            Token token= new Token();
             User user= new User();
             Map<String, Double> mapIDF= new HashMap<>();
             Map<String, String> mapKeys= new HashMap<>();

@@ -34,7 +34,6 @@ public class ConnectMySQL {
 	public ConnectMySQL() throws ClassNotFoundException, SQLException {
 		System.out.println(Name.userName + " || " + Name.password + "||" + Name.hostName + " || " + Name.dbName);
 		conn = getMySQLConnection(Name.hostName, Name.dbName, Name.userName, Name.password);
-		System.out.println("connected! ok done");
 	}
 
 	public ConnectMySQL(String s) throws ClassNotFoundException, SQLException {

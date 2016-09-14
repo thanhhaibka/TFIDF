@@ -6,8 +6,6 @@ import config.Topic;
 
 import java.util.*;
 
-import static java.lang.System.out;
-
 public class Cassandra {
     /**
      * Cassandra Cluster.
@@ -123,6 +121,18 @@ public class Cassandra {
         return m.isEmpty();
     }
 
+    public boolean getPair(String newsID) {
+        String sql = "select mapword from  othernews.newsurl where newsid =" + newsID + ";";
+        Map<String, String> m = new HashMap<>();
+        try {
+            Row row = Cassandra.getInstance().getSession().execute(sql).one();
+            m = row.getMap(0, String.class, String.class);
+        } catch (Exception e) {
+
+        }
+        return m.isEmpty();
+    }
+
     public Map<String, String> getWordPair(String newsID){
         String sql = "select mapword from  othernews.newsurl where newsid =" + newsID + ";";
         Map<String, String> m= new HashMap<>();
@@ -202,7 +212,7 @@ public class Cassandra {
 
     public List<Document> getDocsLimitT(int threshold){
         List<Document> documents = new ArrayList<Document>();
-        String cql= "select newsId from othernews.newsurl limit "+ threshold;
+        String cql= "select newsid from othernews.newsurl limit "+ threshold;
         List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
         rows.stream().forEach(i->
                 documents.add(new Document(i.getLong(0)+""))
@@ -210,6 +220,23 @@ public class Cassandra {
         return documents;
     }
 
+    public Map<String, Document> getDocsLimitTDays(List<String> newsIds){
+        Map<String,Document> documents = new HashMap<>();
+        newsIds.stream().forEach(i->{
+            try{
+                String cql = "select keyword, mapword, content,sapo,title from othernews.newsurl where newsid = " + i + ";";
+                Row r = Cassandra.getInstance().getSession().execute(cql).one();
+                Document d = new Document(i);
+                d.setMapWords(r.getMap(0, String.class, Double.class));
+                d.setMapPairs(r.getMap(1, String.class, String.class));
+                d.setContent(r.getString(2) + " " + r.getString(3) + " " + r.getString(4)+" ");
+                documents.put(i, d);
+            }catch (Exception e){
+
+            }
+        });
+        return documents;
+    }
 
     public List<Document> getContent(List<String> newsIds){
         List<Document> list= new ArrayList<>();
@@ -238,7 +265,9 @@ public class Cassandra {
         Date endDate= new Date(date.getTime()- begin* 1000* 60* 60*24l);
         Set<Long> newsId= new HashSet<Long>();
         String cql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
+//        long t= System.currentTimeMillis();
         List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
+//        System.out.println("getdocs: "+ (System.currentTimeMillis()-t));
         rows.stream().forEach(i->{
             String[] s1= i.getString(0).split("_");
             String[] s2= s1[0].split("-");
@@ -265,8 +294,60 @@ public class Cassandra {
                 }
             }
         });
-        for(Long s: newsId){
-            documents.add(new Document((s+"").trim()));
+        for (Long s : newsId){
+            try{
+                cql = "select keyword, mapword, content,sapo,title from othernews.newsurl where newsid = " + s + ";";
+                Row r = Cassandra.getInstance().getSession().execute(cql).one();
+                Document d = new Document(newsId + "");
+                d.setMapWords(r.getMap(0, String.class, Double.class));
+                d.setMapPairs(r.getMap(1, String.class, String.class));
+                d.setContent(r.getString(2) + " " + r.getString(3) + " " + r.getString(4)+" ");
+                documents.add(d);
+            }catch (Exception e){
+
+            }
+        }
+        return documents;
+    }
+
+    public Set<String> getNewsIds(String guid, String domain, int begin, int end){
+        Set<String> documents = new HashSet<>();
+        Date date= new Date();
+        Date beginDate= new Date(date.getTime()- end* 1000* 60* 60*24l);
+        Date endDate= new Date(date.getTime()- begin* 1000* 60* 60*24l);
+        Set<Long> newsId= new HashSet<Long>();
+        String cql = "select time_insert_domain, guid from othernews.map_guid_domain where guid =" + guid + " ALLOW FILTERING;";
+//        long t= System.currentTimeMillis();
+        List<Row> rows = Cassandra.getInstance().getSession().execute(cql).all();
+//        System.out.println("getdocs: "+ (System.currentTimeMillis()-t));
+        rows.stream().forEach(i->{
+            String[] s1= i.getString(0).split("_");
+            String[] s2= s1[0].split("-");
+            if(s1[1].equals(domain)){
+                Date d= new Date(Integer.parseInt(s2[0])-1900, Integer.parseInt(s2[1])-1, Integer.parseInt(s2[2]));
+//                    System.err.println(d);
+                if(d.after(beginDate)&& d.before(endDate)){
+//                        System.err.println(i.getString(0));
+                    try{
+                        String s = i.getString(0) + "_" + guid;
+                        String sql1 = "select newshis, access_time FROM  othernews.access_history  WHERE time_insert_domain_guid  ='" + s + "';";
+                        List<Row> rows2 = Cassandra.getInstance().getSession().execute(sql1).all();
+                        for (Row r : rows2) {
+                            Map<Long, Integer> map = r.getMap(0, Long.class, Integer.class);
+                            for (Long l : map.keySet()) {
+                                if(!newsId.contains(l)) newsId.add(l);
+                            }
+                        }
+                    }catch (Exception e){
+
+                    }
+                }else{
+//                        System.out.println(i.getString(0));
+                }
+            }
+        });
+        for (Long s : newsId){
+            documents.add(s+"");
         }
         return documents;
     }

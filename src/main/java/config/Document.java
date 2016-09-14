@@ -17,6 +17,20 @@ public class Document implements Comparable<Document> {
     private List<Topic> topics;
     private boolean isSet;
     private Map<String, Double> mapWords;
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setMapPairs(Map<String, String> mapPairs) {
+
+        this.mapPairs = mapPairs;
+    }
+
+    public void setMapWords(Map<String, Double> mapWords) {
+        this.mapWords = mapWords;
+    }
+
     private Map<String, String> mapPairs;
 
     public Map<String, String> getMapPairs() {
@@ -60,6 +74,12 @@ public class Document implements Comparable<Document> {
     public Document(String newsID){
         this.newsID= newsID;
         this.isSet= false;
+    }
+
+    public Document(String newsID, Map<String, Double> keyword, Map<String, String> mapword){
+        this.newsID= newsID;
+        this.mapWords= keyword;
+        this.mapPairs= mapword;
     }
 
     public void setContent() {

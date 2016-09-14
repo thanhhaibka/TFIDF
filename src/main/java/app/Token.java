@@ -20,10 +20,22 @@ import java.util.*;
  * Created by pc on 29/07/2016.
  */
 public class Token {
-
+    public static Map<String, Document> listDocsNDay;
     public Token(){
         VCTokenizer.getInstance();
+        setListDocsNDay(7);
     }
+
+    private void setListDocsNDay(int N){
+        List<String> newsIds= new ArrayList<>();
+        try{
+            newsIds= ConnectMySQL.getInstance().getNewNewsInNumDay(N);
+        }catch (Exception e){
+
+        }
+        listDocsNDay= Cassandra.getInstance().getDocsLimitTDays(newsIds);
+    }
+
     private static String normalize(String var1) {
         String var2 = var1.toLowerCase();
         return var2;
@@ -144,8 +156,7 @@ public class Token {
         ConnectMySQL.getInstance();
         Cassandra.getInstance();
         long t= System.currentTimeMillis();
-        UserProfiling userProfiling= new UserProfiling();
-        Map<String, Double> keys= token.getLongTerm(userProfiling, token, "2885620731906312862", "kenh14.vn", 1);
+        Map<String, Double> keys = token.getLongTerm( token, "2885620731906312862", "kenh14.vn", 6);
         System.out.println(System.currentTimeMillis()- t);
 
 //        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
@@ -158,6 +169,7 @@ public class Token {
 //            }
 //        }
         System.out.println("Done! Ok!");
+        System.exit(0);
     }
 
 //    public void insertToCass(String guid, String domain, Token token) {
@@ -179,13 +191,13 @@ public class Token {
 ////        Cassandra.getInstance().getSession().execute(exampleQuery);
 //    }
 
-    public Map<String, Double> getLongTerm(UserProfiling userProfiling, Token token, String guid, String domain, int number) {
+    public Map<String, Double> getLongTerm( Token token, String guid, String domain, int number) {
         int M = 30 / number;
         double[] weights = {1, 0.9, 0.8, 0.7, 0.6, 0.5};
         Map<String, Double>[] temp = new Map[number];
 //        User []user= new User[N];
         for (int i = 0; i < number; i++) {
-            User user = token.setUser(userProfiling, token, guid, domain, 0, 7);
+            User user = token.setUser( token, guid, domain, M * i, M * (i + 1));
             temp[i] = getTopN(user.getMapTFIDF(), 100);
         }
         Set<String> words = new HashSet<>();
@@ -204,28 +216,23 @@ public class Token {
         return getTop1002(longTermWords);
     }
 
-    public User setUser(UserProfiling userProfiling, Token token, String guid, String domain, int begin, int end) {
+    public User setUser( Token token, String guid, String domain, int begin, int end) {
         List<Document> stringList = new ArrayList<Document>();
         long t1= System.currentTimeMillis();
-        userProfiling.setLongTerm3(guid, domain, begin, end);
-        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
-
-        for (Document d : docs) {
-//            d.setContent();
-//            System.out.println(d.getNewsID());
-//            String s = d.getContent();
-//            if (s.isEmpty()) {
-//                userProfiling.removeLongTerm(d);
-//            } else {
-                stringList.add(d);
-//            }
+        Set<String> newsIDs= Cassandra.getInstance().getNewsIds(guid, domain, begin, end);
+        for (String s : newsIDs) {
+            stringList.add(listDocsNDay.get(s));
         }
+//        userProfiling.setLongTerm3(guid, domain, begin, end);
+//        Set<Document> docs = new HashSet(userProfiling.getLongTerm());
+
+//        for (Document d : docs) {
+//            stringList.add(d);
+//        }
         System.err.println("time: "+(System.currentTimeMillis()- t1));
         User user = new User();
         try {
-            long t= System.currentTimeMillis();
             user = token.getUserVector1(stringList);
-            System.err.println(System.currentTimeMillis()- t);
         } catch (Exception e) {
 
         }
