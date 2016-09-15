@@ -5,6 +5,7 @@ import config.Document;
 import config.User;
 import connectDB.Cassandra;
 import connectDB.ConnectMySQL;
+import connectDB.Name;
 import edu.udo.cs.wvtool.config.WVTConfiguration;
 import edu.udo.cs.wvtool.util.WVToolException;
 import edu.udo.cs.wvtool.wordlist.WVTWordList;
@@ -20,22 +21,53 @@ import java.util.*;
  * Created by pc on 29/07/2016.
  */
 public class Token {
+
     public static Map<String, Document> listDocsNDay;
+    public static Map<String, Document> listDocsNDayKenh14;
+    public static Map<String, Document> listDocsNDaySoha;
+    public static Map<String, Document> listDocsNDayGameK;
+    public static Map<String, Document> listDocsNDayGenK;
+    public static Map<String, Document> listDocsNDayAutoPro;
+    public static Map<String, Document> listDocsNDayAfamily;
+    public static Map<String, Document> listDocsNDayCafeF;
+    public static Map<String, Document> listDocsNDayCafeBiz;
+
     public Token(){
         VCTokenizer.getInstance();
         setListDocsNDay(7);
     }
 
     private void setListDocsNDay(int N){
-        long t = System.currentTimeMillis();
-        List<String> newsIds= new ArrayList<>();
+//        long t = System.currentTimeMillis();
+        List<String> newsIdsKenh14 = new ArrayList<>();
+        List<String> newsIdsSoha = new ArrayList<>();
+        List<String> newsIdsGameK = new ArrayList<>();
+        List<String> newsIdsGenK = new ArrayList<>();
+        List<String> newsIdsAutoPro = new ArrayList<>();
+        List<String> newsIdsAfamily = new ArrayList<>();
+        List<String> newsIdsCafeF = new ArrayList<>();
+        List<String> newsIdsCafeBiz = new ArrayList<>();
         try{
-            newsIds= ConnectMySQL.getInstance().getNewNewsInNumDay(N, "Kenh14");
+            newsIdsKenh14 = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "Kenh14");
+            newsIdsSoha = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "Soha");
+            newsIdsGameK = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "GameK");
+            newsIdsGenK = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "GenK");
+            newsIdsAfamily = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "AFamily");
+            newsIdsAutoPro = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "AutoPro");
+            newsIdsCafeF = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "CafeF");
+            newsIdsCafeBiz = ConnectMySQL.getInstance().getNewNewsInNumDay(N, "CafeBiz");
         }catch (Exception e){
 
         }
-        listDocsNDay= Cassandra.getInstance().getDocsLimitTDays(newsIds);
-        System.out.println("time init: " + (System.currentTimeMillis() - t));
+        listDocsNDayKenh14 = Cassandra.getInstance().getDocsLimitTDays(newsIdsKenh14);
+        listDocsNDayGameK = Cassandra.getInstance().getDocsLimitTDays(newsIdsGameK);
+        listDocsNDayGenK = Cassandra.getInstance().getDocsLimitTDays(newsIdsGenK);
+        listDocsNDayAfamily = Cassandra.getInstance().getDocsLimitTDays(newsIdsAfamily);
+        listDocsNDayAutoPro = Cassandra.getInstance().getDocsLimitTDays(newsIdsAutoPro);
+        listDocsNDayCafeF = Cassandra.getInstance().getDocsLimitTDays(newsIdsCafeF);
+        listDocsNDaySoha = Cassandra.getInstance().getDocsLimitTDays(newsIdsSoha);
+        listDocsNDayCafeBiz = Cassandra.getInstance().getDocsLimitTDays(newsIdsCafeBiz);
+//        System.out.println("time init: " + (System.currentTimeMillis() - t));
     }
 
     private static String normalize(String var1) {
@@ -155,8 +187,9 @@ public class Token {
 //        ConnectMySQL.getInstance();
         Cassandra.getInstance();
         long t= System.currentTimeMillis();
-        UserProfiling userProfiling = new UserProfiling();
-        Map<String, Double> keys = token.getLongTerm(userProfiling, token, "2885620731906312862", "kenh14.vn", 1);
+//        UserProfiling userProfiling = new UserProfiling();
+        Map<String, Double> keys = token.getShortTerm( token, "2885620731906312862", "kenh14.vn", 7);
+        System.out.println(keys);
         System.out.println(System.currentTimeMillis()- t);
 
 //        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
@@ -191,13 +224,19 @@ public class Token {
 ////        Cassandra.getInstance().getSession().execute(exampleQuery);
 //    }
 
-    public Map<String, Double> getLongTerm(UserProfiling userProfiling, Token token, String guid, String domain, int number) {
+    public Map<String, Double> getShortTerm( Token token, String guid, String domain, int number) {
+        User user = token.setUser( token, guid, domain, 0, number);
+//        System.out.println(getTop1002(user.getMapTFIDF()));
+        return getTop1002(user.getMapTFIDF());
+    }
+
+    public Map<String, Double> getLongTerm(Token token, String guid, String domain, int number) {
         int M = 30 / number;
         double[] weights = {1, 0.9, 0.8, 0.7, 0.6, 0.5};
         Map<String, Double>[] temp = new Map[number];
 //        User []user= new User[N];
         for (int i = 0; i < number; i++) {
-            User user = token.setUser(userProfiling, token, guid, domain, 0, 7);
+            User user = token.setUser( token, guid, domain, M*i, M*(i+1));
             temp[i] = getTopN(user.getMapTFIDF(), 100);
         }
         Set<String> words = new HashSet<>();
@@ -216,16 +255,64 @@ public class Token {
         return getTop1002(longTermWords);
     }
 
-    public User setUser(UserProfiling userProfiling, Token token, String guid, String domain, int begin, int end) {
+    public User setUser( Token token, String guid, String domain, int begin, int end) {
         List<Document> documentList = new ArrayList<Document>();
-//        Set<Document> documents= new HashSet<>();
-        long t1= System.currentTimeMillis();
+//        long t1= System.currentTimeMillis();
         Set<String> newsIDs= Cassandra.getInstance().getNewsIds(guid, domain, begin, end);
-        for (String s : newsIDs) {
-            if(listDocsNDay.containsKey(s)){
-                documentList.add(listDocsNDay.get(s));
+        if (domain.equals(Name.domain_kenh14)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayKenh14.containsKey(s)) {
+                    documentList.add(listDocsNDayKenh14.get(s));
+                }
             }
+        } else if (domain.equals(Name.domain_soha)) {
+            for (String s : newsIDs) {
+                if (listDocsNDaySoha.containsKey(s)) {
+                    documentList.add(listDocsNDaySoha.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_gamek)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayGameK.containsKey(s)) {
+                    documentList.add(listDocsNDayGameK.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_genk)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayGenK.containsKey(s)) {
+                    documentList.add(listDocsNDayGenK.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_cafef)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayCafeF.containsKey(s)) {
+                    documentList.add(listDocsNDayCafeF.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_cafebiz)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayCafeBiz.containsKey(s)) {
+                    documentList.add(listDocsNDayCafeBiz.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_afamily)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayAfamily.containsKey(s)) {
+                    documentList.add(listDocsNDayAfamily.get(s));
+                }
+            }
+        } else if (domain.equals(Name.domain_autopro)) {
+            for (String s : newsIDs) {
+                if (listDocsNDayAutoPro.containsKey(s)) {
+                    documentList.add(listDocsNDayAutoPro.get(s));
+                }
+            }
+        } else {
+            return null;
         }
+//            if(listDocsNDay.containsKey(s)){
+//                documentList.add(listDocsNDay.get(s));
+//            }
         Set<Document> docs = new HashSet(documentList);
         for (Document s : docs) {
             try{
@@ -236,14 +323,12 @@ public class Token {
 
             }
         }
-        System.out.println("size: " + documentList.size());
-
-        userProfiling.setLongTerm(documentList);
+//        System.out.println("size: " + documentList.size());
 
 //        for (Document d : docs) {
 //            stringList.add(d);
 //        }
-        System.err.println("time: "+(System.currentTimeMillis()- t1));
+//        System.err.println("time: "+(System.currentTimeMillis()- t1));
         User user = new User();
         try {
             user = token.getUserVector1(documentList);
