@@ -30,7 +30,7 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
 
     public Map<String, Double> updateKeyWord(String guid, String domain) {
         Map<String, Double> longTermWords = new HashMap<>();
-//        if (!Cassandra.getInstance().getMapTFIDF(guid, domain).isEmpty()) {
+        if (!Cassandra.getInstance().getMapTFIDF(guid, domain).isEmpty()) {
 //            java.util.Map<String, Double> mapTFIDF = Cassandra.getInstance().getMapTFIDF(guid, domain);
 //            java.util.Map<String, Double> shortTerm = Cassandra.getInstance().getShortTerm(guid, domain);
 //            Set<String> words= new HashSet<>();
@@ -48,9 +48,9 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
 //                longTermWords.put(s, sum/2);
 //            }
 //            com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "guid_long_term")
-//                    .with(QueryBuilder.set("keywords", Token.getInstance().getTop1002(longTermWords))).where(QueryBuilder.eq("guid_domain", guid+"_"+domain));
+//                    .with(QueryBuilder.set("keywords", NewToken.getInstance().getTop1002(longTermWords))).where(QueryBuilder.eq("guid_domain", guid+"_"+domain));
 //            Cassandra.getInstance().getSession().execute(exampleQuery);
-//        } else {
+        } else {
 //            System.out.println(2);
         int M = 5;
         double[] weights = {1, 0.9, 0.8, 0.7, 0.6, 0.5};
@@ -80,10 +80,10 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
             longTermWords.put(s, sum / 6 * sum2);
             longTermWords= NewToken.getTopN(longTermWords, 100);
         }
-        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "long_term").value("guid_domain", guid + "_" + domain)
+            com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "long_term").value("guid_domain", guid + "_" + domain)
                 .value("keywords", longTermWords);
             Cassandra.getInstance().getSession().execute(exampleQuery);
-//        }
+        }
         return longTermWords;
     }
 }

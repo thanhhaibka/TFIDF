@@ -175,7 +175,11 @@ public class Cassandra {
         String s = "";
         try {
             Row row = Cassandra.getInstance().getSession().execute(sql).one();
-            s = row.getString(0) + " " + row.getString(1) + " " + row.getString(2)+" ";
+            if(row.getString(0)==null){
+                s = null;
+            }else{
+                s = row.getString(0) + " " + row.getString(1) + " " + row.getString(2)+" ";
+            }
         } catch (Exception e) {
 
         }
@@ -447,9 +451,9 @@ public class Cassandra {
 
     public static void main(String[] args) {
 //        System.out.println(!(Cassandra.getInstance().getTags("20160921162749634")==null));
-        String s= "hở1nội1y a hở nội y ashas";
 
-        System.out.println(VCTokenizer.getInstance().getSegmenter().segment(s));
+        System.out.println(Cassandra.getInstance().getTextArticle("20160923093949273")==null);
+        System.out.println(Cassandra.getInstance().getTextArticle("20160923093949273"));
     }
 
 }

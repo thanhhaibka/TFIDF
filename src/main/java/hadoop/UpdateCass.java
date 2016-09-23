@@ -46,7 +46,7 @@ public class UpdateCass extends Configured implements Tool {
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
 
-        job.setNumReduceTasks(24);
+        job.setNumReduceTasks(10);
 
         FileSystem fileSystem = FileSystem.get(conf);
 
@@ -68,6 +68,5 @@ public class UpdateCass extends Configured implements Tool {
         }
         FileOutputFormat.setOutputPath(job, new Path("/user/haint/"+arg[3]));
         return job.waitForCompletion(true) ? 0 : 1;
-
     }
 }

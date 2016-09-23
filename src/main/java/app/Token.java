@@ -295,7 +295,7 @@ public class Token {
 //            }
 //        }
 
-        Map<String, String> newsIDs = ConnectMySQL.getInstance().getNewTagsInNumDay(1);
+        Map<String, String> newsIDs = ConnectMySQL.getInstance().getNewTagsInNumDay(3);
         for (String newsId : newsIDs.keySet()) {
             System.out.println(newsId);
             if (Cassandra.getInstance().getTags(newsId) == null) {
@@ -303,9 +303,18 @@ public class Token {
                         .with(QueryBuilder.set("tags", newsIDs.get(newsId))).where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
                 Cassandra.getInstance().getSession().execute(exampleQuery);
             }
-            if (Cassandra.getInstance().getMap(newsId) || Cassandra.getInstance().getPair(newsId)) {
-                Token.getInstance().getKeyWords(newsId);
+
+            if(Cassandra.getInstance().getTextArticle(newsId)==null){
+                String[] s1 = ConnectMySQL.getInstance().getOther(newsId);
+                com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "newsurl")
+                        .with(QueryBuilder.set("sapo", s1[1])).and(QueryBuilder.set("title", s1[0]))
+                        .and(QueryBuilder.set("content", s1[2])).and(QueryBuilder.set("url", s1[3]))
+                        .where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
+                Cassandra.getInstance().getSession().execute(exampleQuery);
             }
+//            if (Cassandra.getInstance().getMap(newsId) || Cassandra.getInstance().getPair(newsId)) {
+                Token.getInstance().getKeyWords(newsId);
+//            }
         }
 
 //        List<String> stringList = new ArrayList<>();
@@ -431,7 +440,7 @@ public class Token {
         List<String> stringList= new ArrayList<String>();
         String s= Cassandra.getInstance().getTextArticle(newsId);
         User user = new User();
-        if(s==""){
+        if(s==null){
             try{
                 s= ConnectMySQL.getInstance().getContentFromNewsIDByMYSQL(newsId);
                 String tags = ConnectMySQL.getInstance().getTags(newsId);
@@ -450,7 +459,7 @@ public class Token {
                     }
                 }
                 String[] s1 = ConnectMySQL.getInstance().getOther(newsId);
-//                Token.getInstance().insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3], mapKeys);
+                Token.getInstance().insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3], mapKeys);
             }catch (Exception e){
 
             }
