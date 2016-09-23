@@ -2,6 +2,8 @@ package hadoop;
 
 import java.io.IOException;
 
+import app.Token;
+import connectDB.Cassandra;
 import connectDB.Name;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -35,7 +37,7 @@ public class Map extends Mapper<NullWritable, AdsGroup, Text, Text> {
                     || domain.equals(Name.domain_gamek) || domain.equals(Name.domain_genk)
                     || domain.equals(Name.domain_soha) || domain.equals(Name.domain_kenh14)) {
                 key_word.set(guid + Name.regex + log1.getDomain());
-                value_word.set(newsid);
+                value_word.set("0");
                 if (newsid.length() >= 8) {
                     context.write(key_word, value_word);
                 }

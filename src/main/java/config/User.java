@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by pc on 28/07/2016.
  */
 public class User {
-    private ArrayList<WVTWordVector> wordVectors;
+    private ArrayList<WVTWordVector> wordVectors= new ArrayList<>();
     private WVTWordList wordList;
     private Map<String, String> mapWords;
     private ArrayList<TFVector> tfVector;

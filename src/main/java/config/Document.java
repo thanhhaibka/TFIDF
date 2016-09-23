@@ -20,7 +20,7 @@ public class Document implements Comparable<Document> {
     private Map<String, String> mapPairs;
 
     public boolean isSet(){
-        if(mapPairs.isEmpty()||mapWords.isEmpty()) return false;
+        if(mapWords.isEmpty()) return false;
         return true;
     }
 
@@ -98,7 +98,7 @@ public class Document implements Comparable<Document> {
 //    }
 
     public String getContent(){
-        return content;
+        return Cassandra.getInstance().getTextArticle(newsID);
     }
 
     public String getNewsID() {

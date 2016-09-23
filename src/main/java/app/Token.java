@@ -10,7 +10,6 @@ import edu.udo.cs.wvtool.config.WVTConfiguration;
 import edu.udo.cs.wvtool.util.WVToolException;
 import edu.udo.cs.wvtool.wordlist.WVTWordList;
 import stemmer.StopWords;
-import user.UserProfiling;
 import wvtNew.WVToolNew;
 
 import java.io.IOException;
@@ -21,24 +20,62 @@ import java.util.*;
  * Created by pc on 29/07/2016.
  */
 public class Token {
+    //    public static double[][] weights = {}{1, 0.9, 0.8, 0.7, 0.6, 0.5};
+    public Map<String, Document> listDocsNDayKenh14;
+    public Map<String, Document> listDocsNDaySoha;
+    public Map<String, Document> listDocsNDayGameK;
+    public Map<String, Document> listDocsNDayGenK;
+    public Map<String, Document> listDocsNDayAutoPro;
+    public Map<String, Document> listDocsNDayAfamily;
+    public Map<String, Document> listDocsNDayCafeF;
+    public Map<String, Document> listDocsNDayCafeBiz;
 
-    public static Map<String, Document> listDocsNDay;
-    public static Map<String, Document> listDocsNDayKenh14;
-    public static Map<String, Document> listDocsNDaySoha;
-    public static Map<String, Document> listDocsNDayGameK;
-    public static Map<String, Document> listDocsNDayGenK;
-    public static Map<String, Document> listDocsNDayAutoPro;
-    public static Map<String, Document> listDocsNDayAfamily;
-    public static Map<String, Document> listDocsNDayCafeF;
-    public static Map<String, Document> listDocsNDayCafeBiz;
+    public static Token instance = null;
+
+    public static Token getInstance() {
+        if (instance == null) instance = new Token();
+        return instance;
+    }
 
     public Token(){
         VCTokenizer.getInstance();
-        setListDocsNDay(7);
+//        setListDocsNDay(1);
+    }
+
+    public Map<String, Document> getListDocsNDayKenh14() {
+        return listDocsNDayKenh14;
+    }
+
+    public Map<String, Document> getListDocsNDaySoha() {
+        return listDocsNDaySoha;
+    }
+
+    public Map<String, Document> getListDocsNDayGameK() {
+        return listDocsNDayGameK;
+    }
+
+    public Map<String, Document> getListDocsNDayGenK() {
+        return listDocsNDayGenK;
+    }
+
+    public Map<String, Document> getListDocsNDayAutoPro() {
+        return listDocsNDayAutoPro;
+    }
+
+    public Map<String, Document> getListDocsNDayAfamily() {
+        return listDocsNDayAfamily;
+    }
+
+    public Map<String, Document> getListDocsNDayCafeF() {
+        return listDocsNDayCafeF;
+    }
+
+    public Map<String, Document> getListDocsNDayCafeBiz() {
+        return listDocsNDayCafeBiz;
     }
 
     private void setListDocsNDay(int N){
-//        long t = System.currentTimeMillis();
+        long t = System.currentTimeMillis();
         List<String> newsIdsKenh14 = new ArrayList<>();
         List<String> newsIdsSoha = new ArrayList<>();
         List<String> newsIdsGameK = new ArrayList<>();
@@ -60,14 +97,22 @@ public class Token {
 
         }
         listDocsNDayKenh14 = Cassandra.getInstance().getDocsLimitTDays(newsIdsKenh14);
+        System.out.println("k14");
         listDocsNDayGameK = Cassandra.getInstance().getDocsLimitTDays(newsIdsGameK);
+        System.out.println("gamek");
         listDocsNDayGenK = Cassandra.getInstance().getDocsLimitTDays(newsIdsGenK);
+        System.out.println("genk");
         listDocsNDayAfamily = Cassandra.getInstance().getDocsLimitTDays(newsIdsAfamily);
+        System.out.println("af");
         listDocsNDayAutoPro = Cassandra.getInstance().getDocsLimitTDays(newsIdsAutoPro);
+        System.out.println("auto");
         listDocsNDayCafeF = Cassandra.getInstance().getDocsLimitTDays(newsIdsCafeF);
+        System.out.println("cafef");
         listDocsNDaySoha = Cassandra.getInstance().getDocsLimitTDays(newsIdsSoha);
+        System.out.println("soha");
         listDocsNDayCafeBiz = Cassandra.getInstance().getDocsLimitTDays(newsIdsCafeBiz);
-//        System.out.println("time init: " + (System.currentTimeMillis() - t));
+        System.out.println("cafeb");
+        System.out.println("time init: " + (System.currentTimeMillis() - t));
     }
 
     private static String normalize(String var1) {
@@ -79,7 +124,6 @@ public class Token {
         User user = new User();
         String sentences;
         ArrayList<ArrayList<String>> tokens = new ArrayList<ArrayList<String>>();
-        StopWords stopWords = new StopWords();
         Map<String, String> mapWords = new HashMap<String, String>();
         for (int i = 0; i < stringList.size(); i++) {
             ArrayList<String> t = new ArrayList<String>();
@@ -89,13 +133,59 @@ public class Token {
                 try {
                     String[] var1 = VCTokenizer.getInstance().getSegmenter().segment(sentences).split(" ");
                     for (String var2 : var1) {
-                        String[] var3 = var2.split("\\s+");
-                        for (String var4 : var3) {
-                            if (!stopWords.isStopword(var4)) {
-                                mapWords.put(normalize(var4), var4);
-                                t.add(normalize(var4));
-                            }
+                        if (!StopWords.getInstance().isStopword(var2)) {
+                            mapWords.put(normalize(var2), var2);
+                            t.add(normalize(var2));
                         }
+                    }
+                    tokens.add(t);
+                } catch (Exception e) {
+
+                }
+            }
+        }
+//        System.out.println(tokens);
+        WVTConfiguration config = new WVTConfiguration();
+        WVToolNew wvtn = new WVToolNew(false);
+        WVTWordList wordList = wvtn.createWordList(tokens, config);
+        user.setWordList(wordList);
+        user.setWordVectors(wvtn.createVector(tokens, config, wordList));
+        user.setTfVector(wvtn.createVector1(tokens, config, wordList));
+        user.setMapWords(mapWords);
+        return user;
+    }
+
+    public User getUserVectorWithTags(List<String> stringList, String tags) throws WVToolException, IOException {
+        User user = new User();
+        String sentences;
+        ArrayList<ArrayList<String>> tokens = new ArrayList<ArrayList<String>>();
+        Map<String, String> mapWords = new HashMap<String, String>();
+        for (int i = 0; i < stringList.size(); i++) {
+            ArrayList<String> t = new ArrayList<String>();
+            sentences = stringList.get(i).replaceAll("\\<.*?>", "").replaceAll("\\[.*?]", " "); //remove html
+            String[] ts = tags.split(";");
+//            System.out.println(tags);
+            for (String s1: ts){
+                String temp1=s1;
+                String temp= s1.replaceAll(" ", "987");
+                sentences= sentences.replaceAll(temp1, temp);
+            }
+            ts= tags.replace(" ", "_").split(";");
+//            System.out.println(sentences);
+            boolean flag = true;
+            if (sentences != null) {
+                try {
+                    String[] var1 = VCTokenizer.getInstance().getSegmenter().segment(sentences).split(" ");
+                    for (int var5 = 0; var5 < var1.length; var5++) {
+                        String var2 = var1[var5].replaceAll("987","_");
+                        if (!StopWords.getInstance().isStopword(var2)) {
+                            mapWords.put(normalize(var2), var2);
+                            t.add(normalize(var2));
+                        }
+                    }
+                    for(String s: ts){
+                        t.add(normalize(s));
+                        t.add(normalize(s));
                     }
                     tokens.add(t);
                 } catch (Exception e) {
@@ -122,13 +212,9 @@ public class Token {
         Map<String, String> mapWords= new HashMap<String, String>();
         for (int i = 0; i < documentList.size(); i++) {
             Document document = documentList.get(i);
-//            System.err.println(documentList.get(i).getMapPairs());
                 if (document.isSet()) {
-//                System.err.println("true");
                     ArrayList<String> t = new ArrayList<String>();
-
                     for (String s : document.getMapWords().keySet()) {
-                        mapWords.put(s, document.getMapPairs().get(s));
                         for (int p = 0; p < document.getMapWords().get(s); p++) {
                             t.add(s);
                         }
@@ -136,7 +222,7 @@ public class Token {
                     tokens.add(t);
                 } else {
                     ArrayList<String> t = new ArrayList<String>();
-                    sentences = documentList.get(i).getContent().replaceAll("\\<.*?>", " ").replaceAll("\\[.*?]", " "); //remove html
+                    sentences = document.getContent().replaceAll("\\<.*?>", " ").replaceAll("\\[.*?]", " "); //remove html
                     System.out.println(document.getNewsID());
                     if (sentences != null) {
                         try {
@@ -157,7 +243,7 @@ public class Token {
                     }
                 }
             }
-        System.out.println("Token size " + tokens.size());
+//        System.out.println("Token size " + tokens.size());
         WVTConfiguration config = new WVTConfiguration();
         WVToolNew wvtn = new WVToolNew(false);
         WVTWordList wordList = wvtn.createWordList(tokens, config);
@@ -183,14 +269,21 @@ public class Token {
     }
 
     public static void main (String[] args) throws SQLException, ClassNotFoundException, WVToolException, IOException {
-        Token token= new Token();
-//        ConnectMySQL.getInstance();
+        ConnectMySQL.getInstance();
         Cassandra.getInstance();
+        Token.getInstance();
         long t= System.currentTimeMillis();
 //        UserProfiling userProfiling = new UserProfiling();
-        Map<String, Double> keys = token.getShortTerm( token, "2885620731906312862", "kenh14.vn", 7);
-        System.out.println(keys);
-        System.out.println(System.currentTimeMillis()- t);
+//        Map<String, Double> keys = Token.getInstance().getLongTerm( "2885620731906312862", "kenh14.vn", 6);
+//        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "guid_long_term")
+//                .with(QueryBuilder.set("keywords", keys)).where(QueryBuilder.eq("guid_domain", "2885620731906312862"+"_"+"kenh14.vn"));
+//        Cassandra.getInstance().getSession().execute(exampleQuery);
+//        keys = Token.getInstance().getLongTerm( "2885620731906312862", "soha.vn", 6);
+//        exampleQuery = QueryBuilder.update("othernews", "guid_long_term")
+//                .with(QueryBuilder.set("keywords", keys)).where(QueryBuilder.eq("guid_domain", "2885620731906312862"+"_"+"soha.vn"));
+//        Cassandra.getInstance().getSession().execute(exampleQuery);
+//        System.out.println(keys);
+//        System.out.println(System.currentTimeMillis()- t);
 
 //        Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
 //        List<String> newsIDs = ConnectMySQL.getInstance().getNewNewsInNumDay(1);
@@ -198,46 +291,47 @@ public class Token {
 //        for (String newsId : newsIDs) {
 //            System.out.println(newsId);
 //            if (Cassandra.getInstance().getMap(newsId)||Cassandra.getInstance().getPair(newsId)) {
-//                token.getKeyWords(newsId, token);
+//                Token.getInstance().getKeyWords(newsId);
 //            }
 //        }
+
+        Map<String, String> newsIDs = ConnectMySQL.getInstance().getNewTagsInNumDay(1);
+        for (String newsId : newsIDs.keySet()) {
+            System.out.println(newsId);
+            if (Cassandra.getInstance().getTags(newsId) == null) {
+                com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "newsurl")
+                        .with(QueryBuilder.set("tags", newsIDs.get(newsId))).where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
+                Cassandra.getInstance().getSession().execute(exampleQuery);
+            }
+            if (Cassandra.getInstance().getMap(newsId) || Cassandra.getInstance().getPair(newsId)) {
+                Token.getInstance().getKeyWords(newsId);
+            }
+        }
+
+//        List<String> stringList = new ArrayList<>();
+//        String s = ConnectMySQL.getInstance().getContentFromNewsIDByMYSQL("20160922083812279");
+//        stringList.add(s);
+//        String tags = ConnectMySQL.getInstance().getTags("20160922083812279");
+//        User user = Token.getInstance().getUserVectorWithTags(stringList, tags);
+//        System.out.println(user.getMapTFIDF());
         System.out.println("Done! Ok!");
         System.exit(0);
     }
 
-//    public void insertToCass(String guid, String domain, Token token) {
-//        UserProfiling userProfiling = new UserProfiling();
-//        User user = token.setUser(userProfiling, token, guid, domain);
-//        Map<String, Double> mapIDF = getTop1002(user.getMapTFIDF());
-//        Map<String, String> mapKeys = new HashMap<>();
-//        Map<String, String> mapKeysTemp = user.getMapWords();
-//        for (String s : mapIDF.keySet()) {
-//            if (mapKeysTemp.containsKey(s)) {
-//                mapKeys.put(s, mapKeysTemp.get(s));
-//            }
-//        }
-//
-//        System.out.println(mapKeys);
-//        String guid_domain = guid + "_" + domain;
-////        com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "guid_key_word").value("guid_domain", guid_domain)
-////                .value("keyword", mapIDF).value("mapword", mapKeys).ifNotExists();
-////        Cassandra.getInstance().getSession().execute(exampleQuery);
-//    }
-
-    public Map<String, Double> getShortTerm( Token token, String guid, String domain, int number) {
-        User user = token.setUser( token, guid, domain, 0, number);
-//        System.out.println(getTop1002(user.getMapTFIDF()));
+    public Map<String, Double> getShortTerm(String guid, String domain, int number) {
+        User user = Token.getInstance().setUser(guid, domain, 0, number);
         return getTop1002(user.getMapTFIDF());
     }
 
-    public Map<String, Double> getLongTerm(Token token, String guid, String domain, int number) {
+    public Map<String, Double> getLongTerm(String guid, String domain, int number) {
         int M = 30 / number;
         double[] weights = {1, 0.9, 0.8, 0.7, 0.6, 0.5};
         Map<String, Double>[] temp = new Map[number];
 //        User []user= new User[N];
         for (int i = 0; i < number; i++) {
-            User user = token.setUser( token, guid, domain, M*i, M*(i+1));
+            User user = Token.getInstance().setUser(guid, domain, M * i, M * (i + 1));
             temp[i] = getTopN(user.getMapTFIDF(), 100);
+//            System.err.println(temp[i]);
         }
         Set<String> words = new HashSet<>();
         for (int i = 0; i < number; i++) {
@@ -245,17 +339,20 @@ public class Token {
         }
         Map<String, Double> longTermWords = new HashMap<>();
         for (String s : words) {
-            double sum = 0;
+            double sum = 0, sum2 = 0;
             for (int i = 0; i < number; i++) {
-                if (temp[i].containsKey(s)) sum += 1 * weights[i];
+                if (temp[i].containsKey(s)) {
+                    sum += temp[i].get(s) * weights[i];
+                    sum2 += 1;
+                }
             }
-            longTermWords.put(s, sum / number);
+            longTermWords.put(s, sum / number * sum2);
         }
         System.out.println(getTop1002(longTermWords));
         return getTop1002(longTermWords);
     }
 
-    public User setUser( Token token, String guid, String domain, int begin, int end) {
+    public User setUser(String guid, String domain, int begin, int end) {
         List<Document> documentList = new ArrayList<Document>();
 //        long t1= System.currentTimeMillis();
         Set<String> newsIDs= Cassandra.getInstance().getNewsIds(guid, domain, begin, end);
@@ -310,28 +407,9 @@ public class Token {
         } else {
             return null;
         }
-//            if(listDocsNDay.containsKey(s)){
-//                documentList.add(listDocsNDay.get(s));
-//            }
-        Set<Document> docs = new HashSet(documentList);
-        for (Document s : docs) {
-            try{
-                if(s.getContent()==""){
-                    documentList.remove(s);
-                }
-            }catch (Exception e){
-
-            }
-        }
-//        System.out.println("size: " + documentList.size());
-
-//        for (Document d : docs) {
-//            stringList.add(d);
-//        }
-//        System.err.println("time: "+(System.currentTimeMillis()- t1));
         User user = new User();
         try {
-            user = token.getUserVector1(documentList);
+            user = Token.getInstance().getUserVector1(documentList);
         } catch (Exception e) {
 
         }
@@ -347,7 +425,7 @@ public class Token {
         return m1;
     }
 
-    public Map<String, Integer> getKeyWords(String newsId, Token token){
+    public Map<String, Integer> getKeyWords(String newsId) {
         if (newsId == null || newsId.length() == 0) return null;
         Map<String, Integer> getKeyWords= new HashMap<String, Integer>();
         List<String> stringList= new ArrayList<String>();
@@ -356,25 +434,35 @@ public class Token {
         if(s==""){
             try{
                 s= ConnectMySQL.getInstance().getContentFromNewsIDByMYSQL(newsId);
+                String tags = ConnectMySQL.getInstance().getTags(newsId);
                 stringList.add(s);
-                user= token.getUserVector(stringList);
-                Map<String, Integer> m= getTopNInt(user.getMap(), 100);
+                if (tags == null) {
+                    user = Token.getInstance().getUserVector(stringList);
+                } else {
+                    user = Token.getInstance().getUserVectorWithTags(stringList, tags);
+                }
+                Map<String, Integer> m = getTopNInt(user.getMap(), 100);
                 Map<String, String> mapKeysTemp = user.getMapWords();
-                Map<String, String> mapKeys= new HashMap<>();
+                Map<String, String> mapKeys = new HashMap<>();
                 for (String s1 : m.keySet()) {
                     if (mapKeysTemp.containsKey(s1)) {
                         mapKeys.put(s1, mapKeysTemp.get(s1));
                     }
                 }
-                String[] s1= ConnectMySQL.getInstance().getOther(newsId);
-                token.insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3], mapKeys);
+                String[] s1 = ConnectMySQL.getInstance().getOther(newsId);
+//                Token.getInstance().insert(newsId, convert(m), s1[2], s1[1], s1[0], s1[3], mapKeys);
             }catch (Exception e){
 
             }
         }else{
             try{
+                String tags= Cassandra.getInstance().getTags(newsId);
                 stringList.add(s);
-                user= token.getUserVector(stringList);
+                if(tags==null) {
+                    user = Token.getInstance().getUserVector(stringList);
+                }else{
+                    user = Token.getInstance().getUserVectorWithTags(stringList, tags);
+                }
                 Map<String, Integer> m= getTopNInt(user.getMap(), 100);
                 Map<String, String> mapKeysTemp = user.getMapWords();
 //                System.out.println(mapKeysTemp);
@@ -385,7 +473,7 @@ public class Token {
                     }
                 }
 //                System.out.println(m);
-                token.update(newsId, convert(m), mapKeys);
+                Token.getInstance().update(newsId, convert(m), mapKeys);
             }catch (Exception e){
 
             }

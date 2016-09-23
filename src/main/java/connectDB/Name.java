@@ -58,7 +58,7 @@ public class Name {
 	public static String query_creat_table = "CREATE TABLE IF NOT EXISTS cat_raw(guid bigint,date_insert timestamp,domain varchar,PRIMARY KEY(guid)) WITH caching = {'keys': 'ALL', 'rows_per_partition': 'ALL'};";
 	public static String date = "2016-03-07";
 	public static String query_getDataToTrain = "SELECT  `newsId`,  `title`,  `sapo`,`content` FROM  `news`.`news_resource`  LIMIT 0, 150000 ;";
-	public static String query_getContentFromNewsID = "SELECT  `url`,`newsId`,`title`,`sapo`,`content` FROM  `news`.`news_resource` WHERE newsId = ";
+	public static String query_getContentFromNewsID = "SELECT `url`,`newsId`,`title`,`sapo`,`content` FROM  `news`.`news_resource` WHERE newsId = ";
 
 	public static String[] file = new String[] { "parquet_logfile_at_00h_00.snap", "parquet_logfile_at_00h_30.snap",
 			"parquet_logfile_at_01h_00.snap", "parquet_logfile_at_01h_30.snap", "parquet_logfile_at_02h_00.snap",

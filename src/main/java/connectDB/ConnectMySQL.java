@@ -1,5 +1,7 @@
 package connectDB;
 
+import app.Token;
+import config.User;
 import opennlp.tools.util.InvalidFormatException;
 import org.jsoup.Jsoup;
 import org.jsoup.helper.StringUtil;
@@ -117,6 +119,25 @@ public class ConnectMySQL {
 		return newsids;
 	}
 
+	public Map< String, String> getNewTagsInNumDay(int T){
+		Map<String, String> newsids = new HashMap<>();
+//		d.setDate(d.getHours() - 24);
+		String sql = "SELECT newsId, tags FROM  `news`.`news_resource` where publishDate BETWEEN DATE_SUB(NOW(), INTERVAL "+T+" DAY) AND NOW() " +
+				"and is_deleted=0 ;";
+		ResultSet rs= null;
+		try {
+			rs = conn.createStatement().executeQuery(sql);
+			while (rs.next()) {
+				newsids.put( rs.getString("newsId"), rs.getString("tags"));
+			}
+		}catch (Exception e){
+
+		}finally {
+
+		}
+		return newsids;
+	}
+
 	public Connection getConn() {
 		return conn;
 	}
@@ -130,6 +151,23 @@ public class ConnectMySQL {
 			instance = new ConnectMySQL();
 		}
 		return instance;
+	}
+
+	public String getTags(String newsId){
+		String sql = "SELECT tags FROM  `news`.`news_resource` where newsId= "+newsId+ " ;";
+		ResultSet rs= null;
+		String tags= null;
+		try {
+			rs = conn.createStatement().executeQuery(sql);
+			while (rs.next()) {
+				tags= rs.getString("tags");
+			}
+		}catch (Exception e){
+
+		}finally {
+
+		}
+		return tags;
 	}
 
 	public String[] getOther(String newsId){
@@ -162,7 +200,7 @@ public class ConnectMySQL {
 		return s;
 	}
 
-	public static String getContentFromNewsIDByMYSQL(String newsId) {
+	public String getContentFromNewsIDByMYSQL(String newsId) {
 		String content = "";
 		String sql = Name.query_getContentFromNewsID + " " +newsId;
 		try {
@@ -284,14 +322,7 @@ public class ConnectMySQL {
 
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, InvalidFormatException, IOException {
-		// VietTokenizer tokenizer = new VietTokenizer();
-		// System.out.println(tokenizer.tokenize("hôm nay trời thật đẹp.")[0]);;
-		// ConnectMySQL.getInstance();
-//		ConnectMySQL.getInstance();
-//		String s = "SELECT  * FROM  `news`.`news_resource`  LIMIT 0, 10 ;";
-//		ResultSet rs = new ConnectMySQL().conn.createStatement().executeQuery(s);
-//		System.out.print(rs);
-		ConnectMySQL connectMySQL = new ConnectMySQL();
-		System.out.print(connectMySQL.getNewNews().size());
+		User user= Token.getInstance().setUser("1271601692064982226","kenh14.vn",0, 7);
+		System.out.println(user.getMapTFIDF());
 	}
 }

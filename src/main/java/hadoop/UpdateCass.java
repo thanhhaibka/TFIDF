@@ -46,7 +46,7 @@ public class UpdateCass extends Configured implements Tool {
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
 
-        job.setNumReduceTasks(20);
+        job.setNumReduceTasks(24);
 
         FileSystem fileSystem = FileSystem.get(conf);
 
@@ -64,7 +64,7 @@ public class UpdateCass extends Configured implements Tool {
                             new Path("hdfs://" + "192.168.23.130" + ":9000/data/Parquet/PageViewV1/" + temp + "0" + i+"/*.snap"));
             else
                 AdsParquetInputFormat.addInputPath(job,
-                        new Path("hdfs://" + "192.168.23.95" + ":9000/data/Parquet/PageViewV1/" + temp + "0" + i+"/*.snap"));
+                        new Path("hdfs://" + "192.168.23.130" + ":9000/data/Parquet/PageViewV1/" + temp  + i+"/*.snap"));
         }
         FileOutputFormat.setOutputPath(job, new Path("/user/haint/"+arg[3]));
         return job.waitForCompletion(true) ? 0 : 1;
