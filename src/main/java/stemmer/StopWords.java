@@ -31,13 +31,11 @@ public class StopWords extends AbstractStopWordFilter{
         try{
             FileInputStream fileInputStream= new FileInputStream(path);
             BufferedReader bufferedReader= new BufferedReader(new InputStreamReader(fileInputStream));
-            String line="";List<String> words= new ArrayList<String>();
+            String line="";
             while ((line=bufferedReader.readLine())!=null){
-                for(String s: line.split(" ")){
-                    list.add(s);
-                }
+                String s= line.replace(" ","_");
+                list.add(s);
             }
-//            list= new ArrayList<String>(words);
         }catch (IOException e){
 
         }
@@ -62,7 +60,7 @@ public class StopWords extends AbstractStopWordFilter{
             "chợt", "chú", "chứ", "chu_cha", "chứ_lị", "chú_mày", "chú_mình", "chui_cha", "chủn", "chùn_chùn", "chùn_chũn", "chung_cục",
             "chúng_mình", "chung_qui", "chung_quy", "chung_quy_lại", "chúng_ta", "chúng_tôi", "có", "cô", "cơ", "có_thể", "có_chăng_là",
             "cơ_chừng", "có_dễ", "cơ_hồ", "cổ_lai", "cơ_mà", "cô_mình", "có_vẻ", "cóc_khô", "coi_bộ", "coi_mòi", "con", "còn", "cơn",
-            "công_nhiên", "cứ", "cu_cậu", "cứ_việc", "của___", "cực_lực", "cùng", "cũng", "cùng_cực", "cùng_nhau", "cũng_như", "cũng_vậy",
+            "công_nhiên", "cứ", "cu_cậu", "cứ_việc", "của", "cực_lực", "cùng", "cũng", "cùng_cực", "cùng_nhau", "cũng_như", "cũng_vậy",
             "cũng_vậy_thôi", "cùng_với", "cuộc", "cuốn", "dạ", "đại_để", "đại_loại", "đại_nhân", "đại_phàm", "dần_dà", "dần_dần", "đang",
             "đáng_lẽ", "đáng_lí", "đáng_lý", "đành_đạch", "đánh_đùng", "dào", "đáo_để", "dẫu", "dầu_sao", "dẫu_sao", "đây", "để", "dễ_sợ",
             "dễ_thường", "đến", "dì", "đi", "điều", "do", "đó", "dở_chừng", "do_đó", "do_vậy", "do_vì", "dữ", "dù_cho", "dù_rằng", "dưới",
@@ -80,7 +78,7 @@ public class StopWords extends AbstractStopWordFilter{
             "quá_chừng", "quá_độ", "quá_đỗi", "quả_đúng", "quá_lắm", "quả_là", "quả_tang", "qua_quít", "qua_quýt", "quá_sá", "quả_thật",
             "quá_thể", "quả_tình", "quá_trời", "quá_ư", "quả_vậy", "quá_xá", "quý_hồ", "quyển", "quyết", "quyết_nhiên", "ra", "ra_phết",
             "ra_trò", "răng", "rằng", "rằng_là", "ráo", "ráo_trọi", "rày", "rén", "ren_rén", "rích", "riêng", "riệt", "riu_ríu", "rồi",
-            "rón_rén", "rốt_cục", "rốt_cuộc", "rứa", "rút_cục", "sa_sả____", "_sạch", "sao", "sắp", "sất", "sau", "sau_chót", "sau_cùng",
+            "rón_rén", "rốt_cục", "rốt_cuộc", "rứa", "rút_cục", "sa_sả", "sạch", "sao", "sắp", "sất", "sau", "sau_chót", "sau_cùng",
             "sau_cuối", "sau_đó", "sẽ", "sì", "số", "sở_dĩ", "số_là", "song_le", "sốt_sột", "sự", "suýt", "tà_tà", "tại", "tại_vì", "tấm",
             "tăm_tắp", "tấn", "tanh", "tắp", "tắp_lự", "tất_cả", "tất_tần_tật", "tất_tật", "tất_thảy", "tênh", "thà", "tha_hồ", "thà_là",
             "thà_rằng", "thái_quá", "thậm", "thậm_chí", "than_ôi", "tháng", "thanh", "thành_ra", "thành_thử", "thảo_hèn", "thảo_nào",
@@ -164,7 +162,8 @@ public class StopWords extends AbstractStopWordFilter{
             ,"ý_chừng","ý_da","rã","rõ","mềm","mở","dàn","dính","phần","thấp","cao","mà_còn","mùi","dẽ","khó","chất","tự","thay_vì"
             ,"màu","tróc","tốt","đúng", "sai","chúng","loại", "cũng","gồm","những","để", "như_thế_này","suốt", "vừa_qua","nhằm","tụi","tự","ít_ỏi","dành",
             "tốt","nhìn","nah","buộc","tạo","vài","phát","phép","bổ_sung","dễ_dàng","tiếp_tục","gửi","hay_biết","vân","buổi","đâu","ban","uông"
-            ,"mời","đoạn","bé","sống"
+            ,"mời","đoạn","bé","sống", "null","hít","giúp","xảy","hà", "chị","muôn","nước","trang","xay","đũa","pha","khoản","to"
+            ,"tươi","nhanh","loài","khối","chín","nàng","lấy","thật","trao","tao","ghi","treo","tăng","dòng","cực","lái"
             };
     private static char[] stopChars= new char[]{'(',')',',','.',';','-','+','=','&',':','�',10,'<',39,
             '>','?', '…','“','”','!','"','#','$','{','}','/','*',92, '1','2','3','4','5','6','7','8','9','0','_','[',']'};
@@ -172,9 +171,9 @@ public class StopWords extends AbstractStopWordFilter{
     static {
         if (m_Stopwords == null) {
             m_Stopwords = new HashSet();
-//            ArrayList<String> stopW= getStopWords("")
-            for (int i = 0; i < stopWords.length; i++) {
-                m_Stopwords.add(stopWords[i]);
+            List<String> stopW= getStopWords("stoplist.txt");
+            for (int i = 0; i < stopW.size(); i++) {
+                m_Stopwords.add(stopW.get(i));
             }
         }
     }
@@ -195,4 +194,10 @@ public class StopWords extends AbstractStopWordFilter{
         else if (m_StopChars.contains(str.charAt(0))) return true;
         else return m_Stopwords.contains(str.toLowerCase());
     }
+
+    public static void main(String args[]){
+        List<String> stopW= getStopWords("stoplist.txt");
+        System.out.println(stopW);
+    }
+
 }
