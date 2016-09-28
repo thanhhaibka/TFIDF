@@ -46,7 +46,7 @@ public class UpdateCass extends Configured implements Tool {
         job.setMapperClass(Map.class);
         job.setReducerClass(Reduce.class);
 
-        job.setNumReduceTasks(10);
+        job.setNumReduceTasks(21);
 
         FileSystem fileSystem = FileSystem.get(conf);
 

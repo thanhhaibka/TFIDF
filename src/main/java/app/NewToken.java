@@ -155,6 +155,7 @@ public class NewToken {
 //        ConnectMySQL.getInstance();
         VCTokenizer.getInstance();
         Cassandra.getInstance();
+        StopWords.getInstance();
         long t = System.currentTimeMillis();
 //        UserProfiling userProfiling = new UserProfiling();
         Map<String, Double> keys = token.getLongTerm(token, "2885620731906312862", "kenh14.vn", 6);
@@ -212,7 +213,7 @@ public class NewToken {
             } else {
                 temp[i] = getTopN(user.getMapTFIDF(), 100);
             }
-//            System.err.println(i+":"+temp[i]);
+            System.err.println(i+":"+temp[i]);
         }
         Set<String> words = new HashSet<>();
         for (int i = 0; i < number; i++) {

@@ -312,9 +312,9 @@ public class Token {
                         .where(QueryBuilder.eq("newsid", Long.parseLong(newsId)));
                 Cassandra.getInstance().getSession().execute(exampleQuery);
             }
-//            if (Cassandra.getInstance().getMap(newsId) || Cassandra.getInstance().getPair(newsId)) {
+            if (Cassandra.getInstance().getMap(newsId) || Cassandra.getInstance().getPair(newsId)) {
                 Token.getInstance().getKeyWords(newsId);
-//            }
+            }
         }
 
 //        List<String> stringList = new ArrayList<>();

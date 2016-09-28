@@ -2,9 +2,12 @@ package connectDB;
 
 import app.VCTokenizer;
 import com.datastax.driver.core.*;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import config.Document;
 import config.Topic;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Cassandra {
@@ -449,11 +452,21 @@ public class Cassandra {
         return documents;
     }
 
+    public Date getTimeInsert(String guid, String domain){
+        String cql= "select time from othernews.long_term where guid_domain = '0';";
+        Row r= Cassandra.getInstance().getSession().execute(cql).one();
+        Date date= r.getDate("time");
+        return date;
+    }
+
     public static void main(String[] args) {
 //        System.out.println(!(Cassandra.getInstance().getTags("20160921162749634")==null));
-
-        System.out.println(Cassandra.getInstance().getTextArticle("20160923093949273")==null);
-        System.out.println(Cassandra.getInstance().getTextArticle("20160923093949273"));
+        String cql= "select time from othernews.long_term where guid_domain = '0';";
+        Row r= Cassandra.getInstance().getSession().execute(cql).one();
+        Date date= r.getDate("time");
+        Date date1= new Date(date.getTime()- 1*60*60*1000*24);
+        System.out.println((date.getTime()- date1.getTime())/(60*60*1000*24));
+        System.exit(1);
     }
 
 }

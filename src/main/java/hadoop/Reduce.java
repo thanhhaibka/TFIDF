@@ -7,8 +7,11 @@ import connectDB.Cassandra;
 import connectDB.Name;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import stemmer.StopWords;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map;
 
@@ -30,26 +33,34 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
 
     public Map<String, Double> updateKeyWord(String guid, String domain) {
         Map<String, Double> longTermWords = new HashMap<>();
+        Date date= new Date();
         if (!Cassandra.getInstance().getMapTFIDF(guid, domain).isEmpty()) {
-//            java.util.Map<String, Double> mapTFIDF = Cassandra.getInstance().getMapTFIDF(guid, domain);
-//            java.util.Map<String, Double> shortTerm = Cassandra.getInstance().getShortTerm(guid, domain);
-//            Set<String> words= new HashSet<>();
-//            java.util.Map<String, Double> longTermWords = new HashMap<>();
-//            for(String s: mapTFIDF.keySet()){
-//                words.add(s);
-//            }
-//            for(String s: shortTerm.keySet()){
-//                words.add(s);
-//            }
-//            for(String s: words){
-//                double sum=0.0;
-//                if(mapTFIDF.containsKey(s)) sum+=mapTFIDF.get(s)* 0.8;
-//                if(shortTerm.containsKey(s)) sum+=shortTerm.get(s)* 1;
-//                longTermWords.put(s, sum/2);
-//            }
-//            com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "guid_long_term")
-//                    .with(QueryBuilder.set("keywords", NewToken.getInstance().getTop1002(longTermWords))).where(QueryBuilder.eq("guid_domain", guid+"_"+domain));
-//            Cassandra.getInstance().getSession().execute(exampleQuery);
+            Date dd= Cassandra.getInstance().getTimeInsert(guid, domain);
+            if((date.getTime()- dd.getTime())/(60*60*1000*24)>=5) {
+                java.util.Map<String, Double> mapTFIDF = Cassandra.getInstance().getMapTFIDF(guid, domain);
+                java.util.Map<String, Double> shortTerm = Cassandra.getInstance().getShortTerm(guid, domain);
+                Set<String> words = new HashSet<>();
+                for (String s : mapTFIDF.keySet()) {
+                    words.add(s);
+                }
+                for (String s : shortTerm.keySet()) {
+                    if(!StopWords.getInstance().isStopword(s)) {
+                        words.add(s);
+                    }
+                }
+                for (String s : words) {
+                    double sum = 0.0;
+                    if (mapTFIDF.containsKey(s)) sum += mapTFIDF.get(s) * 0.95;
+                    if (shortTerm.containsKey(s)) sum += shortTerm.get(s) * 1;
+                    longTermWords.put(s, sum / 2);
+                }
+                com.datastax.driver.core.Statement exampleQuery = QueryBuilder.update("othernews", "guid_long_term")
+                        .with(QueryBuilder.set("keywords", NewToken.getInstance().getTop1002(longTermWords))).and(QueryBuilder.set("time", date))
+                        .where(QueryBuilder.eq("guid_domain", guid + "_" + domain));
+                Cassandra.getInstance().getSession().execute(exampleQuery);
+            }else {
+
+            }
         } else {
 //            System.out.println(2);
         int M = 5;
@@ -81,7 +92,7 @@ public class Reduce extends Reducer<Text, Text, Text, Text> {
             longTermWords= NewToken.getTopN(longTermWords, 100);
         }
             com.datastax.driver.core.Statement exampleQuery = QueryBuilder.insertInto("othernews", "long_term").value("guid_domain", guid + "_" + domain)
-                .value("keywords", longTermWords);
+                .value("keywords", longTermWords).value("time", date);
             Cassandra.getInstance().getSession().execute(exampleQuery);
         }
         return longTermWords;
