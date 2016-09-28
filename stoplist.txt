@@ -1663,3 +1663,5 @@ hàng
 vi
 bấm
 mái
+sp
+vốn
