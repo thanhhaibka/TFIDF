@@ -1671,3 +1671,8 @@ gọi
 ngược lại
 sẵn
 tờ
+rơi
+miếng
+bền
+hết
+width
